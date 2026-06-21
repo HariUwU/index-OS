@@ -24,8 +24,8 @@ with a scramble animation, audio, and the **WILL OF THE CITY** defense modal.
 ## Install
 
 ```bash
-git clone https://github.com/<you>/will-of-the-city.git
-cd will-of-the-city
+git clone https://github.com/HariUwU/index-OS.git
+cd index-OS
 chmod +x install.sh
 ./install.sh
 ```
