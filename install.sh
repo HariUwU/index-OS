@@ -35,6 +35,7 @@ say "installing repo packages..."
 sudo pacman -S --needed --noconfirm \
   hyprland hyprlock hypridle hyprpaper \
   fastfetch qt6-multimedia qt6-svg kitty \
+  wofi thunar brightnessctl wireplumber \
   base-devel cmake cpio meson git || warn "some pacman packages failed"
 
 say "installing quickshell (AUR)..."
@@ -71,9 +72,11 @@ MAIN="$HOME/.config/hypr/hyprland.conf"
 if [[ -f "$MAIN" ]]; then
   backup "$MAIN"
   grep -q "will-of-the-city.conf" "$MAIN" || printf '\nsource = ~/.config/hypr/will-of-the-city.conf\n' >> "$MAIN"
+  grep -rq "hyprpm reload" "$HOME/.config/hypr/" || printf 'exec-once = hyprpm reload\n' >> "$MAIN"
+  note "layered the theme onto your existing hyprland.conf"
 else
-  printf 'source = ~/.config/hypr/will-of-the-city.conf\n' > "$MAIN"
-  note "no existing hyprland.conf — created a minimal one that sources the theme."
+  cp "$DIR/hypr/hyprland.conf" "$MAIN"
+  note "no existing config — installed a FULL base config (terminal=Super+Return, menu=Super+D, lock=Super+L)"
 fi
 
 # ---- quickshell lock ----
