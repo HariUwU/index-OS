@@ -34,7 +34,8 @@ read -rp "proceed? [y/N] " ok; [[ "${ok,,}" == "y" ]] || { note "aborted."; exit
 say "installing repo packages..."
 sudo pacman -S --needed --noconfirm \
   hyprland hyprlock hypridle hyprpaper \
-  fastfetch qt6-multimedia qt6-svg kitty || warn "some pacman packages failed"
+  fastfetch qt6-multimedia qt6-svg kitty \
+  base-devel cmake cpio meson git || warn "some pacman packages failed"
 
 say "installing quickshell (AUR)..."
 $AUR -S --needed --noconfirm quickshell-git || warn "quickshell-git failed — install manually for the lock/bar"
@@ -88,15 +89,19 @@ for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
   [[ -f "$rc" ]] && { grep -q "^fastfetch" "$rc" || echo "fastfetch" >> "$rc"; }
 done
 
-# ---- hyprbars plugin ----
+# ---- hyprbars plugin (must run INSIDE a live Hyprland session) ----
 say "setting up hyprbars (titlebar buttons)..."
-if command -v hyprpm &>/dev/null; then
-  hyprpm update            || warn "hyprpm update failed (need base-devel + matching headers)"
-  hyprpm add https://github.com/hyprwm/hyprland-plugins || true
-  hyprpm enable hyprbars    || warn "could not enable hyprbars — run 'hyprpm enable hyprbars' inside a Hyprland session"
-  note "ensure your hyprland.conf has:  exec-once = hyprpm reload"
-else
+if ! command -v hyprpm &>/dev/null; then
   warn "hyprpm not found — update Hyprland, then add hyprland-plugins manually"
+elif [[ -z "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+  warn "not inside a Hyprland session — skipping the hyprbars build."
+  note "log into Hyprland, open a terminal there, and run:"
+  note "  hyprpm update && hyprpm add https://github.com/hyprwm/hyprland-plugins && hyprpm enable hyprbars && hyprpm reload"
+else
+  hyprpm update           || warn "hyprpm update failed"
+  hyprpm add https://github.com/hyprwm/hyprland-plugins || true
+  hyprpm enable hyprbars   || warn "could not enable hyprbars"
+  hyprpm reload            || true
 fi
 
 # ---- done ----
