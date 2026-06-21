@@ -48,8 +48,16 @@ Needs Arch + an AUR helper (`yay`/`paru`). Existing configs are backed up to
 
 - ✅ Lock screen (hyprlock + quickshell), hypridle, hyprbars titlebars,
   themed borders/glow, fastfetch + emblem logo, wallpaper, pixel font
-- 🚧 Desktop bar / start menu (quickshell taskbar with `ToplevelManager`)
-  — designed in `preview/`, not yet built as real quickshell
+- ⚠️ Desktop **bar** + **atmosphere** (quickshell) — built (`quickshell/Bar.qml`,
+  `Atmosphere.qml`, `shell.qml`), but **untested**: run `quickshell` inside a
+  Hyprland session and expect to tweak an API name or two for your qs version.
+  The atmosphere is a full-screen layer, so it needs a real GPU — it won't
+  render under VirtualBox.
+
+### Running the bar + atmosphere
+The base config autostarts them (`exec-once = quickshell`). If you layered the
+theme onto an existing config, add that line yourself — and **disable any bar
+your distro already runs** (e.g. CachyOS's waybar) so you don't get two.
 
 ## Preview
 

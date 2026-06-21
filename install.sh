@@ -79,9 +79,14 @@ else
   note "no existing config — installed a FULL base config (terminal=Super+Return, menu=Super+D, lock=Super+L)"
 fi
 
-# ---- quickshell lock ----
-say "installing quickshell lock..."
-cp "$DIR/quickshell/lock/lock.qml" "$HOME/.config/quickshell/lock/"
+# ---- quickshell: lock + bar + atmosphere ----
+say "installing quickshell shell (bar + atmosphere + lock)..."
+cp "$DIR/quickshell/shell.qml"      "$HOME/.config/quickshell/"
+cp "$DIR/quickshell/Bar.qml"        "$HOME/.config/quickshell/"
+cp "$DIR/quickshell/Atmosphere.qml" "$HOME/.config/quickshell/"
+cp "$DIR/quickshell/lock/lock.qml"  "$HOME/.config/quickshell/lock/"
+note "desktop shell starts with: quickshell   (add 'exec-once = quickshell' if layering on an existing config)"
+note "if your distro already runs a bar (e.g. CachyOS waybar), disable it to avoid a double bar"
 
 # ---- fastfetch ----
 say "installing fastfetch + emblem logo..."
@@ -119,9 +124,10 @@ ${DIM}   lock screen ....... quickshell -p ~/.config/quickshell/lock/lock.qml
    manual lock ....... Super + L
    backups ........... $BAK
 
-   NOTE: the desktop bar / start menu (quickshell taskbar) is the next
-   build and is NOT installed yet — only the lock + hyprbars + fastfetch
-   + wallpaper are wired. See preview/will-of-the-city-full.html for the
-   full intended desktop.${NC}
+   NOTE: the bar + atmosphere (quickshell) are now included but UNTESTED —
+   start them with 'quickshell' inside a Hyprland session and expect to
+   tweak an API name or two for your quickshell version. The atmosphere
+   is a full-screen layer, so it (and the wallpaper) need a real GPU —
+   they will NOT render under VirtualBox. See preview/ for the target.${NC}
 
 EOF
