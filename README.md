@@ -1,70 +1,78 @@
 # WILL OF THE CITY :: THE INDEX
 
-A Project-Moon-themed Hyprland rice — cyan CRT terminal aesthetic, the
-flower-dagger emblem, the Perfect DOS VGA 437 pixel font, and a lock screen
-with a scramble animation, audio, and the **WILL OF THE CITY** defense modal.
+A Project-Moon-themed **labwc** desktop — cyan CRT terminal aesthetic, pixel
+font, glowing emblem, and real `[_] [#] [X]` bracket titlebars.
 
-![wallpaper](wallpaper/the-index.png)
-
-## What's in here
-
-| Path | What it is |
-|------|-----------|
-| `install.sh` | Arch installer — deps, configs, font, wallpaper, hyprbars |
-| `hypr/will-of-the-city.conf` | Borders + cyan glow + hyprbars titlebars + keybinds |
-| `hypr/hyprlock.conf` | Lightweight lock (look + clock + password field) |
-| `hypr/hypridle.conf` | Idle → lock / screen-off |
-| `hypr/hyprpaper.conf` | Wallpaper daemon config |
-| `quickshell/lock/lock.qml` | **Full lock** — scramble, audio, WILL OF THE CITY modal (real PAM) |
-| `fastfetch/` | fastfetch config + the emblem ASCII logo (`index.txt`) |
-| `assets/` | Pixel font, logo, profile, power/restart icons, sounds |
-| `wallpaper/the-index.png` | The glowing emblem wallpaper |
-| `preview/will-of-the-city-full.html` | Self-contained browser preview of the **whole** lock + desktop |
+Built for a fresh, no-desktop Arch / CachyOS base. One installer, plug & play.
 
 ## Install
 
 ```bash
-git clone https://github.com/HariUwU/index-OS.git
-cd index-OS
-chmod +x install.sh
+sudo pacman -S --needed git
+git clone https://github.com/HariUwU/index-OS.git ~/index-OS
+cd ~/index-OS
 ./install.sh
 ```
 
-Needs Arch + an AUR helper (`yay`/`paru`). Existing configs are backed up to
-`~/.config/.index-backup-<timestamp>`.
+`install.sh` installs deps (labwc, quickshell, swaybg, swayidle, foot, wofi,
+font), lays down the theme + config, sets the wallpaper, wires the lock, and
+makes labwc **auto-start on tty1 login**. It ends with a per-file checklist so
+you can see everything landed. Safe to re-run.
 
-## Two lock options
+> quickshell comes from the AUR. If the checklist flags it, install an AUR
+> helper and run `yay -S quickshell-git`, then re-run `./install.sh`.
 
-- **`hyprlock`** — reliable, ships with the look + password field. `hypridle`
-  uses this by default.
-- **`quickshell` lock (`lock.qml`)** — the full experience (scramble, sounds,
-  the WILL OF THE CITY modal). Test it first from a TTY:
+Start it (or just reboot):
+
+```bash
+dbus-run-session labwc
+```
+
+## Keys
+
+| Key | Action |
+|-----|--------|
+| `Super+Return` | terminal (foot) |
+| `Super+D` | launcher (wofi) |
+| `Super+Q` | close window |
+| `Super+L` | **INDEX lock** (the default + only locker) |
+| `Super+1..5` | desktops |
+| right-click | root menu |
+
+## What's in here
+
+| Path | What |
+|------|------|
+| `install.sh` | the one installer (labwc, plug & play) |
+| `labwc/theme/the-index/` | titlebar theme — the `[_] [#] [X]` bracket buttons (PNG glyphs) |
+| `labwc/config/` | `rc.xml`, `menu.xml`, `autostart`, `environment` |
+| `quickshell/shell.qml` | loads the bar + atmosphere |
+| `quickshell/Bar.qml` | top bar — emblem/start menu, workspaces, clock, tray |
+| `quickshell/Atmosphere.qml` | particles + subtitle + corner HUD (background layer) |
+| `quickshell/lock/lock.qml` | the INDEX lock — scramble, audio, PAM auth |
+| `wallpaper/` | the glowing-emblem wallpaper |
+| `preview/` | the target look (browser mockup) |
+
+## The lock
+
+The **INDEX lock** (`quickshell/lock/lock.qml`) is the default and only locker.
+`Super+L` runs it directly, and `swayidle` routes any system lock request
+(`loginctl lock-session`) to it too. There is **no idle auto-lock** — the screen
+only locks when you ask it to.
+
+## Status / honest notes
+
+- ✅ **Bracket titlebars** — real, themed by labwc from PNG button glyphs.
+- ✅ Wallpaper (swaybg), font, palette, lock wiring, auto-start on login.
+- ⚠️ **bar / atmosphere / lock** are quickshell QML — if one doesn't render,
+  run it in the foreground to see the error and fix from there:
   ```bash
-  quickshell -p ~/.config/quickshell/lock/lock.qml
+  quickshell -p ~/.config/quickshell/shell.qml
   ```
-  then point `hypridle`'s `lock_cmd` at it.
+- The bar's workspace pills switch via `wtype` (labwc has no workspace IPC).
+- Needs a real GPU path (bare metal or QEMU/virtio-gpu), **not** VirtualBox.
 
-## Status
+## Aesthetic
 
-- ✅ Lock screen (hyprlock + quickshell), hypridle, hyprbars titlebars,
-  themed borders/glow, fastfetch + emblem logo, wallpaper, pixel font
-- ⚠️ Desktop **bar** + **atmosphere** (quickshell) — built (`quickshell/Bar.qml`,
-  `Atmosphere.qml`, `shell.qml`), but **untested**: run `quickshell` inside a
-  Hyprland session and expect to tweak an API name or two for your qs version.
-  The atmosphere is a full-screen layer, so it needs a real GPU — it won't
-  render under VirtualBox.
-
-### Running the bar + atmosphere
-The base config autostarts them (`exec-once = quickshell`). If you layered the
-theme onto an existing config, add that line yourself — and **disable any bar
-your distro already runs** (e.g. CachyOS's waybar) so you don't get two.
-
-## Preview
-
-Open `preview/will-of-the-city-full.html` in any browser (fullscreen).
-Lock password: `index`. Fail 3× for the modal.
-
-## Credits
-
-Aesthetic inspired by Project Moon / Limbus Company. Emblem + assets by the
-repo owner. Perfect DOS VGA 437 font by Zeh Fernando.
+Palette: cyan `#5DADE2` / bright `#85C5E8` / dim `#3A7CA5` / red `#FF6B6B` /
+bg `#05080d`. Font: Perfect DOS VGA 437. From *The House of Spiders: The Index*.

@@ -1,196 +1,131 @@
 #!/usr/bin/env bash
 # ============================================================
-#  WILL OF THE CITY :: THE INDEX
-#  Hyprland rice installer  (Arch Linux)
+#  WILL OF THE CITY :: THE INDEX  —  labwc  (plug & play)
+#  Wipes any half-installed state, lays everything down,
+#  GENERATES the fragile files (so they can't copy-corrupt),
+#  verifies every file, and sets labwc to boot automatically.
+#  Safe to re-run any time.
 # ============================================================
-set -euo pipefail
-
+CYAN=$'\e[38;2;93;173;226m'; DIM=$'\e[2m'; RED=$'\e[38;2;255;107;107m'; GRN=$'\e[38;2;93;226;133m'; NC=$'\e[0m'
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CYAN=$'\033[38;2;93;173;226m'; RED=$'\033[38;2;255;107;107m'; DIM=$'\033[38;2;58;124;165m'; NC=$'\033[0m'
-say(){ printf '%s:: %s%s\n' "$CYAN" "$*" "$NC"; }
-warn(){ printf '%s!! %s%s\n' "$RED" "$*" "$NC"; }
-note(){ printf '%s   %s%s\n' "$DIM" "$*" "$NC"; }
+say(){ printf '%s::%s %s\n' "$CYAN" "$NC" "$1"; }
+ok(){  printf '   %s\xe2\x9c\x93%s %s\n' "$GRN" "$NC" "$1"; }
+bad(){ printf '   %s\xe2\x9c\x97%s %s\n' "$RED" "$NC" "$1"; }
+note(){ printf '   %s%s%s\n' "$DIM" "$1" "$NC"; }
+CFG="$HOME/.config"; THEMES="$HOME/.local/share/themes"
 
-if [[ "$(id -u)" -eq 0 ]]; then warn "do not run as root."; exit 1; fi
-if ! command -v pacman &>/dev/null; then warn "this installer targets Arch Linux (pacman)."; exit 1; fi
+say "WILL OF THE CITY :: THE INDEX  —  labwc (plug & play)"
+[ -d "$DIR/labwc" ] || { bad "run this from inside the index-OS repo (labwc/ not found)"; exit 1; }
 
-# ---- AUR helper ----
-AUR=""
-for h in yay paru; do command -v "$h" &>/dev/null && AUR="$h" && break; done
-if [[ -z "$AUR" ]]; then warn "no AUR helper found (yay/paru). install one, then re-run."; exit 1; fi
-say "using AUR helper: $AUR"
+# ---------- 1. packages ----------
+if command -v pacman >/dev/null; then
+  say "installing packages..."
+  sudo pacman -S --needed --noconfirm \
+      labwc swaybg swayidle foot wofi wtype thunar \
+      qt6-multimedia qt6-svg qt6-declarative fastfetch wireplumber \
+      brightnessctl ttf-dejavu base-devel cmake meson git 2>/dev/null \
+      || note "(some packages may have failed - continuing)"
+  if ! command -v quickshell >/dev/null && ! command -v qs >/dev/null; then
+    say "installing quickshell (AUR)..."
+    if command -v yay >/dev/null; then yay -S --needed --noconfirm quickshell-git || note "quickshell-git failed"
+    elif command -v paru >/dev/null; then paru -S --needed --noconfirm quickshell-git || note "quickshell-git failed"
+    else note "no AUR helper - install yay then: yay -S quickshell-git"; fi
+  fi
+else
+  note "not Arch - install manually: labwc swaybg swayidle foot wofi wtype quickshell qt6-multimedia qt6-svg fastfetch"
+fi
 
-# ---- confirm ----
-cat <<EOF
-${CYAN}
-  WILL OF THE CITY :: THE INDEX
-  This will install Hyprland + lock + bar deps, copy configs to
-  ~/.config (existing ones are backed up), and set the wallpaper.
-${NC}
-EOF
-read -rp "proceed? [y/N] " ok; [[ "${ok,,}" == "y" ]] || { note "aborted."; exit 0; }
-
-# ---- packages ----
-say "installing repo packages..."
-sudo pacman -S --needed --noconfirm \
-  hyprland hyprlock hypridle hyprpaper \
-  fastfetch qt6-multimedia qt6-svg kitty \
-  wofi thunar brightnessctl wireplumber \
-  base-devel cmake cpio meson git || warn "some pacman packages failed"
-
-say "installing quickshell (AUR)..."
-$AUR -S --needed --noconfirm quickshell-git || warn "quickshell-git failed — install manually for the lock/bar"
-
-# ---- font ----
+# ---------- 2. font ----------
 say "installing Perfect DOS VGA 437..."
 mkdir -p "$HOME/.local/share/fonts"
-cp "$DIR/assets/PerfectDOSVGA437.ttf" "$HOME/.local/share/fonts/"
+cp -f "$DIR/assets/PerfectDOSVGA437.ttf" "$HOME/.local/share/fonts/" 2>/dev/null || true
 fc-cache -f >/dev/null 2>&1 || true
 
-# ---- backup helper ----
-TS="$(date +%Y%m%d-%H%M%S)"
-BAK="$HOME/.config/.index-backup-$TS"
-backup(){ if [[ -e "$1" ]]; then mkdir -p "$BAK"; cp -r "$1" "$BAK/"; note "backed up $(basename "$1") -> $BAK"; fi; }
+# ---------- 3. titlebar theme (the bracket buttons) ----------
+say "installing THE INDEX titlebar theme..."
+rm -rf "$THEMES/the-index"
+mkdir -p "$THEMES/the-index/labwc"
+cp -f "$DIR"/labwc/theme/the-index/labwc/* "$THEMES/the-index/labwc/" 2>/dev/null
 
-mkdir -p "$HOME/.config/hypr" "$HOME/.config/quickshell/lock" "$HOME/.config/fastfetch"
+# ---------- 4. labwc config (rc/menu copied, autostart/env GENERATED) ----------
+say "writing labwc config..."
+rm -rf "$CFG/labwc"; mkdir -p "$CFG/labwc"
+cp -f "$DIR/labwc/config/rc.xml"   "$CFG/labwc/rc.xml"
+cp -f "$DIR/labwc/config/menu.xml" "$CFG/labwc/menu.xml"
+cp -f "$DIR/wallpaper/the-index.png" "$CFG/labwc/wall.png"
 
-# ---- wallpaper + assets ----
-say "placing wallpaper + assets..."
-cp "$DIR/wallpaper/the-index.png" "$HOME/.config/hypr/wall.png"
-rm -rf "$HOME/.config/quickshell/lock/assets"
-cp -r "$DIR/assets" "$HOME/.config/quickshell/lock/assets"   # lock.qml reads ./assets
+cat > "$CFG/labwc/autostart" <<'AUTO'
+#!/bin/sh
+# WILL OF THE CITY :: THE INDEX  —  labwc autostart
+LOCK='pgrep -f lock/lock.qml || quickshell -p $HOME/.config/quickshell/lock/lock.qml'
+swaybg -i "$HOME/.config/labwc/wall.png" -m fill &
+swayidle -w lock "$LOCK" &
+quickshell -p "$HOME/.config/quickshell/shell.qml" &
+AUTO
+chmod +x "$CFG/labwc/autostart"
 
-# ---- hypr configs ----
-say "installing hypr configs..."
-backup "$HOME/.config/hypr/hyprlock.conf";  cp "$DIR/hypr/hyprlock.conf"  "$HOME/.config/hypr/"
-backup "$HOME/.config/hypr/hypridle.conf";  cp "$DIR/hypr/hypridle.conf"  "$HOME/.config/hypr/"
-# write hyprpaper.conf with ABSOLUTE paths (~ doesn't expand in hyprpaper -> "no target")
-backup "$HOME/.config/hypr/hyprpaper.conf"
-printf 'preload = %s/.config/hypr/wall.png\nwallpaper = ,%s/.config/hypr/wall.png\nsplash = false\nipc = on\n' "$HOME" "$HOME" > "$HOME/.config/hypr/hyprpaper.conf"
-cp "$DIR/hypr/will-of-the-city.conf" "$HOME/.config/hypr/will-of-the-city.conf"
+cat > "$CFG/labwc/environment" <<'ENVF'
+XCURSOR_THEME=Adwaita
+XCURSOR_SIZE=24
+QT_QPA_PLATFORM=wayland
+ENVF
 
-# source the theme from the main config (without clobbering it)
-MAIN="$HOME/.config/hypr/hyprland.conf"
-if [[ -f "$MAIN" ]]; then
-  backup "$MAIN"
-  grep -q "will-of-the-city.conf" "$MAIN" || printf '\nsource = ~/.config/hypr/will-of-the-city.conf\n' >> "$MAIN"
-  grep -rq "hyprpm reload" "$HOME/.config/hypr/" || printf 'exec-once = hyprpm reload\n' >> "$MAIN"
-  # force the lock key + idle to the INDEX lock (appended last -> wins over distro keybinds)
-  grep -q "lock/lock.qml" "$MAIN" || printf 'exec-once = hypridle\nbind = SUPER, L, exec, pgrep -f lock/lock.qml || quickshell -p ~/.config/quickshell/lock/lock.qml\n' >> "$MAIN"
-  note "layered the theme onto your existing hyprland.conf (Super+L -> THE INDEX lock)"
-else
-  cp "$DIR/hypr/hyprland.conf" "$MAIN"
-  note "no existing config — installed a FULL base config (terminal=Super+Return, menu=Super+D, lock=Super+L)"
+# ---------- 5. quickshell shell (bar + atmosphere + lock) ----------
+say "installing quickshell shell..."
+rm -rf "$CFG/quickshell"; mkdir -p "$CFG/quickshell"
+cp -rf "$DIR/quickshell/." "$CFG/quickshell/"
+
+# ---------- 6. launcher + fastfetch ----------
+mkdir -p "$CFG/wofi" "$CFG/fastfetch"
+cp -f "$DIR/wofi/config" "$CFG/wofi/" 2>/dev/null || true
+cp -f "$DIR/wofi/style.css" "$CFG/wofi/" 2>/dev/null || true
+cp -rf "$DIR/fastfetch/." "$CFG/fastfetch/" 2>/dev/null || true
+
+# ---------- 7. auto-start labwc on login (TTY1) ----------
+say "setting labwc to start on login..."
+BP="$HOME/.bash_profile"; SNIP_B='[ -z "$WAYLAND_DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ] && exec dbus-run-session labwc'
+touch "$BP"; grep -q "exec dbus-run-session labwc" "$BP" 2>/dev/null || printf '\n# WILL OF THE CITY :: THE INDEX\n%s\n' "$SNIP_B" >> "$BP"
+FC="$HOME/.config/fish/config.fish"; mkdir -p "$(dirname "$FC")"; touch "$FC"
+if ! grep -q "dbus-run-session labwc" "$FC" 2>/dev/null; then
+  cat >> "$FC" <<'FISH'
+
+# WILL OF THE CITY :: THE INDEX
+if status is-login; and test -z "$WAYLAND_DISPLAY"; and test (tty) = /dev/tty1
+    exec dbus-run-session labwc
+end
+FISH
 fi
 
-# ---- quickshell: lock + bar + atmosphere ----
-say "installing quickshell shell (bar + atmosphere + lock)..."
-cp "$DIR/quickshell/shell.qml"      "$HOME/.config/quickshell/"
-cp "$DIR/quickshell/Bar.qml"        "$HOME/.config/quickshell/"
-cp "$DIR/quickshell/Atmosphere.qml" "$HOME/.config/quickshell/"
-cp "$DIR/quickshell/lock/lock.qml"  "$HOME/.config/quickshell/lock/"
+# ---------- 8. VERIFY everything landed ----------
+echo; say "verifying install:"
+chk(){ [ -s "$1" ] && ok "$2" || bad "$2  (MISSING: $1)"; }
+chk "$CFG/labwc/rc.xml"                          "labwc rc.xml"
+chk "$CFG/labwc/autostart"                       "labwc autostart"
+chk "$CFG/labwc/wall.png"                        "wallpaper"
+chk "$THEMES/the-index/labwc/themerc"            "titlebar themerc"
+chk "$THEMES/the-index/labwc/close-active.png"   "bracket button [X]"
+chk "$THEMES/the-index/labwc/iconify-active.png" "bracket button [_]"
+chk "$THEMES/the-index/labwc/max-active.png"     "bracket button [#]"
+chk "$CFG/quickshell/shell.qml"                  "quickshell shell"
+chk "$CFG/quickshell/Bar.qml"                    "bar"
+chk "$CFG/quickshell/Atmosphere.qml"             "atmosphere"
+chk "$CFG/quickshell/lock/lock.qml"              "INDEX lock"
+command -v labwc  >/dev/null && ok "labwc installed"  || bad "labwc NOT installed"
+( command -v quickshell >/dev/null || command -v qs >/dev/null ) && ok "quickshell installed" || bad "quickshell NOT installed - run: yay -S quickshell-git"
+command -v swaybg >/dev/null && ok "swaybg installed" || bad "swaybg NOT installed"
 
-# ---- autostart: wallpaper + bar + atmosphere, and KILL conflicting bars ----
-say "wiring autostart + removing conflicting bars (noctalia/waybar)..."
-SHELL_CMD="quickshell -p $HOME/.config/quickshell/shell.qml"
-LUA_AUTO="$HOME/.config/hypr/config/autostart.lua"   # CachyOS-style Lua config
-if [[ -f "$LUA_AUTO" ]]; then
-  backup "$LUA_AUTO"
-  # comment out any 'qs -c noctalia-shell' / waybar autostart (double-bar)
-  sed -i 's|^\([^-].*qs -c noctalia-shell.*\)$|-- \1  -- disabled by THE INDEX|' "$LUA_AUTO" || true
-  sed -i 's|^\([^-].*exec_cmd("waybar.*\)$|-- \1  -- disabled by THE INDEX|'    "$LUA_AUTO" || true
-  if ! grep -q "quickshell -p" "$LUA_AUTO"; then
-    printf '\n-- WILL OF THE CITY :: THE INDEX\nhl.exec_cmd("hypridle")\nhl.exec_cmd("hyprpaper")\nhl.exec_cmd("%s")\n' "$SHELL_CMD" >> "$LUA_AUTO"
-  fi
-  note "CachyOS Lua config: disabled noctalia, added wallpaper + THE INDEX shell"
-elif [[ -f "$MAIN" ]]; then
-  grep -q "quickshell -p" "$MAIN" || printf 'exec-once = hyprpaper\nexec-once = %s\n' "$SHELL_CMD" >> "$MAIN"
-  note "added wallpaper + shell autostart to hyprland.conf"
-fi
-
-# ---- LOCK: make the INDEX lock the ONLY locker, kill every other lock ----
-say "forcing the INDEX lock everywhere (removing hyprlock / noctalia / idle-locks)..."
-INDEX_LOCK='pgrep -f lock/lock.qml || quickshell -p ~/.config/quickshell/lock/lock.qml'
-# strip lock bindings from CachyOS Lua keybinds (hyprlock / noctalia lock / loginctl lock)
-LUA_KEYS="$HOME/.config/hypr/config/keybinds.lua"
-if [[ -f "$LUA_KEYS" ]]; then
-  backup "$LUA_KEYS"
-  sed -i 's|^\([^-].*hyprlock.*\)$|-- \1  -- disabled by THE INDEX|'             "$LUA_KEYS" || true
-  sed -i 's|^\([^-].*noctalia.*[Ll]ock.*\)$|-- \1  -- disabled by THE INDEX|'    "$LUA_KEYS" || true
-  sed -i 's|^\([^-].*noctCall.*[Ll]ock.*\)$|-- \1  -- disabled by THE INDEX|'    "$LUA_KEYS" || true
-  sed -i 's|^\([^-].*loginctl lock-session.*\)$|-- \1  -- disabled by THE INDEX|' "$LUA_KEYS" || true
-fi
-# remove any hyprlock idle-lock autostart in the Lua autostart too
-[[ -f "$LUA_AUTO" ]] && sed -i 's|^\([^-].*hyprlock.*\)$|-- \1  -- disabled by THE INDEX|' "$LUA_AUTO" || true
-# our binding wins because hyprland.conf is loaded last (see MAIN block above)
-note "Super+L -> INDEX lock; no idle auto-lock (see hypridle.conf)"
-# nuke any existing noctalia config so 'qs' can't fall back to it
-[[ -d "$HOME/.config/quickshell/noctalia-shell" ]] && { backup "$HOME/.config/quickshell/noctalia-shell"; rm -rf "$HOME/.config/quickshell/noctalia-shell"; } || true
-
-
-# ---- wofi (themed start-menu launcher, opened by the bar emblem) ----
-say "installing themed wofi launcher..."
-mkdir -p "$HOME/.config/wofi"
-backup "$HOME/.config/wofi/style.css"
-cp "$DIR/wofi/config"    "$HOME/.config/wofi/"
-cp "$DIR/wofi/style.css" "$HOME/.config/wofi/"
-note "if your distro already runs a bar (e.g. CachyOS waybar), disable it to avoid a double bar"
-
-# ---- fastfetch ----
-say "installing fastfetch + emblem logo..."
-backup "$HOME/.config/fastfetch/config.jsonc"
-cp "$DIR/fastfetch/config.jsonc" "$HOME/.config/fastfetch/"
-cp "$DIR/fastfetch/index.txt"    "$HOME/.config/fastfetch/"
-for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
-  [[ -f "$rc" ]] && { grep -q "^fastfetch" "$rc" || echo "fastfetch" >> "$rc"; }
-done
-
-# ---- hyprbars plugin (must run INSIDE a live Hyprland session) ----
-say "setting up hyprbars (titlebar buttons)..."
-if ! command -v hyprpm &>/dev/null; then
-  warn "hyprpm not found — update Hyprland, then add hyprland-plugins manually"
-elif [[ -z "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
-  warn "not inside a Hyprland session — skipping the hyprbars build."
-  note "log into Hyprland, open a terminal there, and run:"
-  note "  hyprpm update && hyprpm add https://github.com/hyprwm/hyprland-plugins && hyprpm enable hyprbars && hyprpm reload"
-else
-  hyprpm update           || warn "hyprpm update failed"
-  hyprpm add https://github.com/hyprwm/hyprland-plugins || true
-  hyprpm enable hyprbars   || warn "could not enable hyprbars"
-  hyprpm reload            || true
-fi
-
-# ---- bring it all up NOW if we're inside a live Hyprland session ----
-if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
-  say "starting wallpaper + bar + atmosphere..."
-  pkill -f noctalia-shell    2>/dev/null || true
-  pkill -x waybar            2>/dev/null || true
-  pkill -x hyprpaper         2>/dev/null || true
-  hyprpaper >/dev/null 2>&1 & disown 2>/dev/null || true
-  sleep 1
-  pkill -f "quickshell -p $HOME/.config/quickshell/shell.qml" 2>/dev/null || true
-  quickshell -p "$HOME/.config/quickshell/shell.qml" >/dev/null 2>&1 & disown 2>/dev/null || true
-  note "if the bar didn't appear, run it in the foreground to see errors:"
-  note "  quickshell -p ~/.config/quickshell/shell.qml"
-fi
-
-# ---- done ----
-cat <<EOF
+cat <<DONE
 
 ${CYAN}:: done.${NC}
-${DIM}   wallpaper ......... set automatically (hyprpaper, absolute path)
-   bar + atmosphere .. autostart via quickshell (noctalia/waybar disabled)
-   lock screen ....... Super + L = INDEX lock (the ONLY locker; NO idle auto-lock)
-   test fastfetch .... fastfetch
-   backups ........... $BAK
+${DIM}   Reboot, or from TTY1 run:  dbus-run-session labwc
+   (it now starts automatically when you log in on tty1.)
 
-   If you ran this from a TTY (not inside Hyprland): log into Hyprland and
-   everything autostarts. hyprbars (titlebars) only builds inside a live
-   session — if it was skipped, just re-run this installer from a terminal
-   inside Hyprland.
+   Inside labwc:
+     Super+Return  terminal      Super+D  launcher
+     Super+Q       close         Super+L  INDEX lock (default)
+     Super+1..5    desktops      right-click  menu
 
-   The atmosphere + wallpaper are a real Wayland layer — they need a real
-   GPU and will NOT render under VirtualBox (use QEMU/virtio-gpu or metal).
-   See preview/ for the target look.${NC}
-
-EOF
+   If a line above shows a red X, that one thing is missing - tell me which.
+   If the bar doesn't appear, run this and send me the output:
+     quickshell -p ~/.config/quickshell/shell.qml${NC}
+DONE
