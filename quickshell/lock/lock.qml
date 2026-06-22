@@ -17,7 +17,9 @@
 //    quickshell -p ./lock.qml
 //
 //  WIRE TO hypridle ( ~/.config/hypr/hypridle.conf ):
-//    general { lock_cmd = pidof quickshell || quickshell -p ~/.config/quickshell/lock/lock.qml }
+//    general { lock_cmd = pgrep -f lock/lock.qml || quickshell -p ~/.config/quickshell/lock/lock.qml }
+//    (guard on the lock's command line — NOT `pidof quickshell`, since the
+//     bar/atmosphere also run quickshell and would make that always true.)
 //
 //  NOTES / HONEST CAVEATS:
 //   - The Quickshell.Services.Pam API has shifted across versions. If auth
