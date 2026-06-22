@@ -20,7 +20,7 @@ say "WILL OF THE CITY :: THE INDEX  (labwc edition)"
 # ---- packages ----
 if command -v pacman >/dev/null; then
   say "installing packages..."
-  sudo pacman -S --needed --noconfirm labwc swaybg foot wofi wtype thunar \
+  sudo pacman -S --needed --noconfirm labwc swaybg swayidle foot wofi wtype thunar \
       qt6-multimedia qt6-svg fastfetch wireplumber brightnessctl \
       base-devel cmake meson git || warn "some packages failed (continuing)"
   if ! command -v quickshell >/dev/null && ! command -v qs >/dev/null; then
@@ -74,7 +74,8 @@ ${DIM}   start it from a TTY:   dbus-run-session labwc
    terminal .......... Super + Return  (foot)
    launcher .......... Super + D       (wofi)
    close window ...... Super + Q
-   lock (INDEX) ...... Super + L        (the only locker)
+   lock (INDEX) ...... DEFAULT lock — Super+L AND loginctl lock-session
+                       both run the INDEX lock; NO idle auto-lock
    wallpaper + bar ... start via ~/.config/labwc/autostart
 
    HONEST NOTES:
