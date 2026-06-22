@@ -1,0 +1,6 @@
+#!/bin/sh
+# WILL OF THE CITY :: THE INDEX  —  labwc autostart
+# wallpaper (swaybg = wlroots-native; hyprpaper is Hyprland-only)
+swaybg -i "$HOME/.config/labwc/wall.png" -m fill &
+# the THE INDEX bar + atmosphere (quickshell is compositor-agnostic Wayland)
+quickshell -p "$HOME/.config/quickshell/shell.qml" &

@@ -1,0 +1,22 @@
+# WILL OF THE CITY :: THE INDEX  —  labwc theme
+border.width: 1
+window.active.border.color: #5DADE2
+window.inactive.border.color: #16303f
+window.active.title.bg.color: #0c1620
+window.inactive.title.bg.color: #070d14
+window.active.label.text.color: #85C5E8
+window.inactive.label.text.color: #3A7CA5
+window.label.text.justify: Left
+window.button.width: 36
+window.button.height: 26
+window.button.spacing: 2
+window.titlebar.padding.width: 8
+window.titlebar.padding.height: 2
+# menus / osd
+menu.items.bg.color: #0a0e16
+menu.items.text.color: #85C5E8
+menu.items.active.bg.color: #143245
+menu.items.active.text.color: #ffffff
+osd.bg.color: #0a0e16
+osd.border.color: #5DADE2
+osd.label.text.color: #85C5E8
