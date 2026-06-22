@@ -75,7 +75,9 @@ if [[ -f "$MAIN" ]]; then
   backup "$MAIN"
   grep -q "will-of-the-city.conf" "$MAIN" || printf '\nsource = ~/.config/hypr/will-of-the-city.conf\n' >> "$MAIN"
   grep -rq "hyprpm reload" "$HOME/.config/hypr/" || printf 'exec-once = hyprpm reload\n' >> "$MAIN"
-  note "layered the theme onto your existing hyprland.conf"
+  # force the lock key + idle to the INDEX lock (appended last -> wins over distro keybinds)
+  grep -q "lock/lock.qml" "$MAIN" || printf 'exec-once = hypridle\nbind = SUPER, L, exec, pgrep -f lock/lock.qml || quickshell -p ~/.config/quickshell/lock/lock.qml\n' >> "$MAIN"
+  note "layered the theme onto your existing hyprland.conf (Super+L -> THE INDEX lock)"
 else
   cp "$DIR/hypr/hyprland.conf" "$MAIN"
   note "no existing config — installed a FULL base config (terminal=Super+Return, menu=Super+D, lock=Super+L)"
@@ -98,13 +100,30 @@ if [[ -f "$LUA_AUTO" ]]; then
   sed -i 's|^\([^-].*qs -c noctalia-shell.*\)$|-- \1  -- disabled by THE INDEX|' "$LUA_AUTO" || true
   sed -i 's|^\([^-].*exec_cmd("waybar.*\)$|-- \1  -- disabled by THE INDEX|'    "$LUA_AUTO" || true
   if ! grep -q "quickshell -p" "$LUA_AUTO"; then
-    printf '\n-- WILL OF THE CITY :: THE INDEX\nhl.exec_cmd("hyprpaper")\nhl.exec_cmd("%s")\n' "$SHELL_CMD" >> "$LUA_AUTO"
+    printf '\n-- WILL OF THE CITY :: THE INDEX\nhl.exec_cmd("hypridle")\nhl.exec_cmd("hyprpaper")\nhl.exec_cmd("%s")\n' "$SHELL_CMD" >> "$LUA_AUTO"
   fi
   note "CachyOS Lua config: disabled noctalia, added wallpaper + THE INDEX shell"
 elif [[ -f "$MAIN" ]]; then
   grep -q "quickshell -p" "$MAIN" || printf 'exec-once = hyprpaper\nexec-once = %s\n' "$SHELL_CMD" >> "$MAIN"
   note "added wallpaper + shell autostart to hyprland.conf"
 fi
+
+# ---- LOCK: make the INDEX lock the ONLY locker, kill every other lock ----
+say "forcing the INDEX lock everywhere (removing hyprlock / noctalia / idle-locks)..."
+INDEX_LOCK='pgrep -f lock/lock.qml || quickshell -p ~/.config/quickshell/lock/lock.qml'
+# strip lock bindings from CachyOS Lua keybinds (hyprlock / noctalia lock / loginctl lock)
+LUA_KEYS="$HOME/.config/hypr/config/keybinds.lua"
+if [[ -f "$LUA_KEYS" ]]; then
+  backup "$LUA_KEYS"
+  sed -i 's|^\([^-].*hyprlock.*\)$|-- \1  -- disabled by THE INDEX|'             "$LUA_KEYS" || true
+  sed -i 's|^\([^-].*noctalia.*[Ll]ock.*\)$|-- \1  -- disabled by THE INDEX|'    "$LUA_KEYS" || true
+  sed -i 's|^\([^-].*noctCall.*[Ll]ock.*\)$|-- \1  -- disabled by THE INDEX|'    "$LUA_KEYS" || true
+  sed -i 's|^\([^-].*loginctl lock-session.*\)$|-- \1  -- disabled by THE INDEX|' "$LUA_KEYS" || true
+fi
+# remove any hyprlock idle-lock autostart in the Lua autostart too
+[[ -f "$LUA_AUTO" ]] && sed -i 's|^\([^-].*hyprlock.*\)$|-- \1  -- disabled by THE INDEX|' "$LUA_AUTO" || true
+# our binding wins because hyprland.conf is loaded last (see MAIN block above)
+note "Super+L -> INDEX lock; no idle auto-lock (see hypridle.conf)"
 # nuke any existing noctalia config so 'qs' can't fall back to it
 [[ -d "$HOME/.config/quickshell/noctalia-shell" ]] && { backup "$HOME/.config/quickshell/noctalia-shell"; rm -rf "$HOME/.config/quickshell/noctalia-shell"; } || true
 
@@ -161,7 +180,7 @@ cat <<EOF
 ${CYAN}:: done.${NC}
 ${DIM}   wallpaper ......... set automatically (hyprpaper, absolute path)
    bar + atmosphere .. autostart via quickshell (noctalia/waybar disabled)
-   lock screen ....... Super + L  (quickshell THE INDEX lock, wired via hypridle)
+   lock screen ....... Super + L = INDEX lock (the ONLY locker; NO idle auto-lock)
    test fastfetch .... fastfetch
    backups ........... $BAK
 
