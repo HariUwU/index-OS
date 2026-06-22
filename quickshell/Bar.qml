@@ -95,7 +95,8 @@ PanelWindow {
                     delegate: Image {
                         required property var modelData
                         source: modelData.icon
-                        implicitWidth: 16; implicitHeight: 16
+                        width: 16; height: 16
+                        sourceSize.width: 16; sourceSize.height: 16
                         fillMode: Image.PreserveAspectFit
                         MouseArea {
                             anchors.fill: parent
