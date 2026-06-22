@@ -17,10 +17,17 @@ device, so it won't hit the VirtualBox `GBM ASSERTION FAILED` crash.
 ---
 
 ## 0. Prerequisites
-- Windows 11 with WSL2, and **virtualization enabled in BIOS/UEFI** (VT-x / AMD-V).
-- A WSL2 distro (Ubuntu assumed below).
+- Windows 11 with **virtualization enabled in BIOS/UEFI** (VT-x / AMD-V).
 - ~30 GB free on a drive (examples use `D:` → `/mnt/d`).
 - The **CachyOS ISO** downloaded on Windows (cachyos.org/download).
+
+## 0.5 Install WSL2 (if you don't have it)
+In **PowerShell (Admin)**:
+```powershell
+wsl --install
+```
+This installs WSL2 + Ubuntu. **Reboot**, then Ubuntu opens and asks for a
+username + password. (Already have WSL2? Skip to step 1.)
 
 ## 1. Enable nested virtualization + systemd
 On **Windows**, create/edit `C:\Users\<you>\.wslconfig`:
