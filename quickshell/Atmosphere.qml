@@ -19,6 +19,25 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Background
     WlrLayershell.namespace: "index-atmosphere"
 
+    readonly property string pixel: "Perfect DOS VGA 437"
+
+    // ---- corner HUD (matches the preview corners) ----
+    Text {
+        anchors.left: parent.left; anchors.top: parent.top; anchors.margins: 14
+        text: "// THE INDEX \u00b7 district: unregistered"
+        font.family: atmo.pixel; font.pixelSize: 13; color: "#3A7CA5"
+    }
+    Text {
+        anchors.right: parent.right; anchors.top: parent.top; anchors.margins: 14
+        text: "SEASON :: THE INDEX"
+        font.family: atmo.pixel; font.pixelSize: 13; color: "#FF6B6B"
+    }
+    Text {
+        anchors.right: parent.right; anchors.bottom: parent.bottom; anchors.margins: 14
+        text: "> standby_"
+        font.family: atmo.pixel; font.pixelSize: 13; color: "#3A7CA5"
+    }
+
     // ---- drifting cyan motes ----
     Canvas {
         id: cv
