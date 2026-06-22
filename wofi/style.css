@@ -1,0 +1,9 @@
+* { font-family: "Perfect DOS VGA 437", monospace; font-size: 15px; }
+window { background-color: #05080d; border: 2px solid #5DADE2; }
+#input { margin: 8px; padding: 8px; background-color: #0a0e16; color: #85C5E8; border: 1px solid #3A7CA5; }
+#inner-box { margin: 6px; }
+#scroll { margin: 4px; }
+#text { color: #85C5E8; padding: 3px; }
+#entry { padding: 4px; }
+#entry:selected { background-color: #3A7CA5; }
+#entry:selected #text { color: #04141c; }

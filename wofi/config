@@ -1,0 +1,7 @@
+show=drun
+prompt=>_ THE INDEX
+width=420
+height=520
+insensitive=true
+allow_images=false
+no_actions=true

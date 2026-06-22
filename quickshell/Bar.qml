@@ -43,11 +43,19 @@ PanelWindow {
             anchors.rightMargin: 12
             spacing: 12
 
-            // ---- left: emblem + workspaces ----
+            // ---- left: emblem (start button) + workspaces ----
             Text {
                 text: "// THE INDEX"
                 font.family: bar.pixel; font.pixelSize: 15
-                color: bar.cyanB
+                color: startArea.containsMouse ? "#ffffff" : bar.cyanB
+                Behavior on color { ColorAnimation { duration: 150 } }
+                MouseArea {
+                    id: startArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: Hyprland.dispatch("exec wofi --show drun")
+                }
             }
 
             RowLayout {

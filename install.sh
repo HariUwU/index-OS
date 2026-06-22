@@ -86,6 +86,13 @@ cp "$DIR/quickshell/Bar.qml"        "$HOME/.config/quickshell/"
 cp "$DIR/quickshell/Atmosphere.qml" "$HOME/.config/quickshell/"
 cp "$DIR/quickshell/lock/lock.qml"  "$HOME/.config/quickshell/lock/"
 note "desktop shell starts with: quickshell   (add 'exec-once = quickshell' if layering on an existing config)"
+
+# ---- wofi (themed start-menu launcher, opened by the bar emblem) ----
+say "installing themed wofi launcher..."
+mkdir -p "$HOME/.config/wofi"
+backup "$HOME/.config/wofi/style.css"
+cp "$DIR/wofi/config"    "$HOME/.config/wofi/"
+cp "$DIR/wofi/style.css" "$HOME/.config/wofi/"
 note "if your distro already runs a bar (e.g. CachyOS waybar), disable it to avoid a double bar"
 
 # ---- fastfetch ----
