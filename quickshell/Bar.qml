@@ -11,7 +11,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Hyprland
 import Quickshell.Services.SystemTray
 
 PanelWindow {
@@ -27,6 +26,7 @@ PanelWindow {
     readonly property string pixel: "Perfect DOS VGA 437"
 
     property bool menuOpen: false
+    property int  activeWs: 1
 
     SystemClock { id: clock; precision: SystemClock.Minutes }
 
@@ -64,24 +64,27 @@ PanelWindow {
             RowLayout {
                 spacing: 5
                 Repeater {
-                    model: Hyprland.workspaces
+                    model: 5
                     delegate: Rectangle {
-                        required property var modelData
-                        readonly property bool active:
-                            Hyprland.focusedWorkspace
-                            && Hyprland.focusedWorkspace.id === modelData.id
+                        required property int index
+                        readonly property int ws: index + 1
+                        readonly property bool active: bar.activeWs === ws
                         implicitWidth: 22; implicitHeight: 20
                         color: active ? bar.cyan : "transparent"
                         Text {
                             anchors.centerIn: parent
-                            text: modelData.name
+                            text: ws
                             font.family: bar.pixel; font.pixelSize: 15
                             color: active ? "#04141c" : bar.cyanD
                         }
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: Hyprland.dispatch("workspace " + modelData.id)
+                            onClicked: {
+                                bar.activeWs = ws
+                                // labwc has no workspace IPC; simulate Super+N (rc.xml GoToDesktop)
+                                Quickshell.execDetached(["wtype","-M","logo","-k", String(ws), "-m","logo"])
+                            }
                         }
                     }
                 }
@@ -219,8 +222,8 @@ PanelWindow {
                     Layout.fillWidth: true; spacing: 6
                     Repeater {
                         model: [
-                            { label: "LOCK",   cmd: ["loginctl", "lock-session"] },
-                            { label: "EXIT",   cmd: ["hyprctl", "dispatch", "exit"] },
+                            { label: "LOCK",   cmd: ["sh","-c","pgrep -f lock/lock.qml || quickshell -p ~/.config/quickshell/lock/lock.qml"] },
+                            { label: "EXIT",   cmd: ["sh","-c","kill -TERM $(pidof labwc)"] },
                             { label: "REBOOT", cmd: ["systemctl", "reboot"] },
                             { label: "OFF",    cmd: ["systemctl", "poweroff"] }
                         ]

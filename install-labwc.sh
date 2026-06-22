@@ -20,7 +20,7 @@ say "WILL OF THE CITY :: THE INDEX  (labwc edition)"
 # ---- packages ----
 if command -v pacman >/dev/null; then
   say "installing packages..."
-  sudo pacman -S --needed --noconfirm labwc swaybg foot wofi thunar \
+  sudo pacman -S --needed --noconfirm labwc swaybg foot wofi wtype thunar \
       qt6-multimedia qt6-svg fastfetch wireplumber brightnessctl \
       base-devel cmake meson git || warn "some packages failed (continuing)"
   if ! command -v quickshell >/dev/null && ! command -v qs >/dev/null; then
