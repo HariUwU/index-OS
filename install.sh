@@ -64,7 +64,9 @@ cp -r "$DIR/assets" "$HOME/.config/quickshell/lock/assets"   # lock.qml reads ./
 say "installing hypr configs..."
 backup "$HOME/.config/hypr/hyprlock.conf";  cp "$DIR/hypr/hyprlock.conf"  "$HOME/.config/hypr/"
 backup "$HOME/.config/hypr/hypridle.conf";  cp "$DIR/hypr/hypridle.conf"  "$HOME/.config/hypr/"
-backup "$HOME/.config/hypr/hyprpaper.conf"; cp "$DIR/hypr/hyprpaper.conf" "$HOME/.config/hypr/"
+# write hyprpaper.conf with ABSOLUTE paths (~ doesn't expand in hyprpaper -> "no target")
+backup "$HOME/.config/hypr/hyprpaper.conf"
+printf 'preload = %s/.config/hypr/wall.png\nwallpaper = ,%s/.config/hypr/wall.png\nsplash = false\nipc = on\n' "$HOME" "$HOME" > "$HOME/.config/hypr/hyprpaper.conf"
 cp "$DIR/hypr/will-of-the-city.conf" "$HOME/.config/hypr/will-of-the-city.conf"
 
 # source the theme from the main config (without clobbering it)
@@ -85,7 +87,27 @@ cp "$DIR/quickshell/shell.qml"      "$HOME/.config/quickshell/"
 cp "$DIR/quickshell/Bar.qml"        "$HOME/.config/quickshell/"
 cp "$DIR/quickshell/Atmosphere.qml" "$HOME/.config/quickshell/"
 cp "$DIR/quickshell/lock/lock.qml"  "$HOME/.config/quickshell/lock/"
-note "desktop shell starts with: quickshell   (add 'exec-once = quickshell' if layering on an existing config)"
+
+# ---- autostart: wallpaper + bar + atmosphere, and KILL conflicting bars ----
+say "wiring autostart + removing conflicting bars (noctalia/waybar)..."
+SHELL_CMD="quickshell -p $HOME/.config/quickshell/shell.qml"
+LUA_AUTO="$HOME/.config/hypr/config/autostart.lua"   # CachyOS-style Lua config
+if [[ -f "$LUA_AUTO" ]]; then
+  backup "$LUA_AUTO"
+  # comment out any 'qs -c noctalia-shell' / waybar autostart (double-bar)
+  sed -i 's|^\([^-].*qs -c noctalia-shell.*\)$|-- \1  -- disabled by THE INDEX|' "$LUA_AUTO" || true
+  sed -i 's|^\([^-].*exec_cmd("waybar.*\)$|-- \1  -- disabled by THE INDEX|'    "$LUA_AUTO" || true
+  if ! grep -q "quickshell -p" "$LUA_AUTO"; then
+    printf '\n-- WILL OF THE CITY :: THE INDEX\nhl.exec_cmd("hyprpaper")\nhl.exec_cmd("%s")\n' "$SHELL_CMD" >> "$LUA_AUTO"
+  fi
+  note "CachyOS Lua config: disabled noctalia, added wallpaper + THE INDEX shell"
+elif [[ -f "$MAIN" ]]; then
+  grep -q "quickshell -p" "$MAIN" || printf 'exec-once = hyprpaper\nexec-once = %s\n' "$SHELL_CMD" >> "$MAIN"
+  note "added wallpaper + shell autostart to hyprland.conf"
+fi
+# nuke any existing noctalia config so 'qs' can't fall back to it
+[[ -d "$HOME/.config/quickshell/noctalia-shell" ]] && { backup "$HOME/.config/quickshell/noctalia-shell"; rm -rf "$HOME/.config/quickshell/noctalia-shell"; } || true
+
 
 # ---- wofi (themed start-menu launcher, opened by the bar emblem) ----
 say "installing themed wofi launcher..."
@@ -119,22 +141,37 @@ else
   hyprpm reload            || true
 fi
 
+# ---- bring it all up NOW if we're inside a live Hyprland session ----
+if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
+  say "starting wallpaper + bar + atmosphere..."
+  pkill -f noctalia-shell    2>/dev/null || true
+  pkill -x waybar            2>/dev/null || true
+  pkill -x hyprpaper         2>/dev/null || true
+  hyprpaper >/dev/null 2>&1 & disown 2>/dev/null || true
+  sleep 1
+  pkill -f "quickshell -p $HOME/.config/quickshell/shell.qml" 2>/dev/null || true
+  quickshell -p "$HOME/.config/quickshell/shell.qml" >/dev/null 2>&1 & disown 2>/dev/null || true
+  note "if the bar didn't appear, run it in the foreground to see errors:"
+  note "  quickshell -p ~/.config/quickshell/shell.qml"
+fi
+
 # ---- done ----
 cat <<EOF
 
 ${CYAN}:: done.${NC}
-${DIM}   lock screen ....... quickshell -p ~/.config/quickshell/lock/lock.qml
-                       (hypridle currently calls hyprlock; edit lock_cmd to
-                        switch to the quickshell lock once you've tested it)
+${DIM}   wallpaper ......... set automatically (hyprpaper, absolute path)
+   bar + atmosphere .. autostart via quickshell (noctalia/waybar disabled)
+   lock screen ....... Super + L  (quickshell THE INDEX lock, wired via hypridle)
    test fastfetch .... fastfetch
-   wallpaper ......... ~/.config/hypr/wall.png  (hyprpaper)
-   manual lock ....... Super + L
    backups ........... $BAK
 
-   NOTE: the bar + atmosphere (quickshell) are now included but UNTESTED —
-   start them with 'quickshell' inside a Hyprland session and expect to
-   tweak an API name or two for your quickshell version. The atmosphere
-   is a full-screen layer, so it (and the wallpaper) need a real GPU —
-   they will NOT render under VirtualBox. See preview/ for the target.${NC}
+   If you ran this from a TTY (not inside Hyprland): log into Hyprland and
+   everything autostarts. hyprbars (titlebars) only builds inside a live
+   session — if it was skipped, just re-run this installer from a terminal
+   inside Hyprland.
+
+   The atmosphere + wallpaper are a real Wayland layer — they need a real
+   GPU and will NOT render under VirtualBox (use QEMU/virtio-gpu or metal).
+   See preview/ for the target look.${NC}
 
 EOF
