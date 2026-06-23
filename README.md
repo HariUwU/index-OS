@@ -53,6 +53,14 @@ dbus-run-session labwc
 | `wallpaper/` | the glowing-emblem wallpaper |
 | `preview/` | the target look (browser mockup) |
 
+## Swapping the lock song / assets
+
+All lock assets live in ONE place: `assets/` (font, `Logo.png`, `DefaultProfile.jpg`,
+`Power.png`, `Restart.png`, `sounds/`). To change the lock background song, replace
+`assets/sounds/bg.mp3`, then re-run `./install.sh`. The installer copies `assets/`
+into the lock at install time, so the swap takes effect. Don't edit
+`quickshell/lock/assets/` directly — it's generated.
+
 ## The lock
 
 The **INDEX lock** (`quickshell/lock/lock.qml`) is the default and only locker.
