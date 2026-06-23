@@ -250,7 +250,7 @@ PanelWindow {
                     Layout.fillWidth: true; spacing: 6
                     Repeater {
                         model: [
-                            { label: "LOCK",   cmd: ["sh","-c","pgrep -f lock/lock.qml || quickshell -p ~/.config/quickshell/lock/lock.qml"] },
+                            { label: "LOCK",   cmd: ["sh","-c","$HOME/.config/labwc/index-lock"] },
                             { label: "REBOOT", cmd: ["systemctl", "reboot"] },
                             { label: "OFF",    cmd: ["systemctl", "poweroff"] }
                         ]
