@@ -115,6 +115,23 @@ end
 FISH
 fi
 
+# ---------- 7b. TTY1 AUTOLOGIN -> boot straight into labwc + INDEX lock ----------
+# no text password at boot; the INDEX lock becomes the only auth gate.
+say "enabling tty1 autologin (boot straight into the INDEX lock)..."
+USERNAME="$(id -un)"
+if command -v systemctl >/dev/null && [ -d /etc/systemd ]; then
+  sudo mkdir -p /etc/systemd/system/getty@tty1.service.d 2>/dev/null && \
+  sudo tee /etc/systemd/system/getty@tty1.service.d/autologin.conf >/dev/null <<EOF2 && \
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin $USERNAME --noclear %I \$TERM
+EOF2
+  sudo systemctl daemon-reload 2>/dev/null || true
+  note "tty1 autologin enabled for '$USERNAME' (no TTY password; INDEX lock guards login)"
+else
+  note "no systemd — set up tty1 autologin manually for boot-straight-to-lock"
+fi
+
 # ---------- 8. VERIFY everything landed ----------
 echo; say "verifying install:"
 chk(){ [ -s "$1" ] && ok "$2" || bad "$2  (MISSING: $1)"; }
