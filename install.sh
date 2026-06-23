@@ -160,12 +160,19 @@ say "theming foot + forcing dark on apps..."
 mkdir -p "$CFG/foot"
 cp -f "$DIR/labwc/config/foot.ini" "$CFG/foot/foot.ini" 2>/dev/null || true
 
-# GTK 3/4 dark theme so apps (Thunar, etc.) match the desktop
+# GTK 3/4 — the INDEX-cyan theme so apps (Thunar, dialogs, pavucontrol) match the desktop
+mkdir -p "$THEMES/the-index/gtk-3.0" "$THEMES/the-index/gtk-4.0"
+cp -f "$DIR/labwc/theme/the-index-gtk/gtk-3.0/gtk.css" "$THEMES/the-index/gtk-3.0/gtk.css" 2>/dev/null || true
+cp -f "$DIR/labwc/theme/the-index-gtk/gtk-4.0/gtk.css" "$THEMES/the-index/gtk-4.0/gtk.css" 2>/dev/null || true
+cp -f "$DIR/labwc/theme/the-index-gtk/index.theme" "$THEMES/the-index/index.theme" 2>/dev/null || true
+# direct config override = strongest (applies over any theme, incl. libadwaita apps)
 mkdir -p "$CFG/gtk-3.0" "$CFG/gtk-4.0"
 cp -f "$DIR/labwc/config/gtk/settings.ini" "$CFG/gtk-3.0/settings.ini" 2>/dev/null || true
 cp -f "$DIR/labwc/config/gtk/settings.ini" "$CFG/gtk-4.0/settings.ini" 2>/dev/null || true
+cp -f "$DIR/labwc/theme/the-index-gtk/gtk-3.0/gtk.css" "$CFG/gtk-3.0/gtk.css" 2>/dev/null || true
+cp -f "$DIR/labwc/theme/the-index-gtk/gtk-4.0/gtk.css" "$CFG/gtk-4.0/gtk.css" 2>/dev/null || true
 command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
-command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark' 2>/dev/null || true
+command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface gtk-theme 'the-index' 2>/dev/null || true
 
 # ---------- 7. auto-start labwc on login (TTY1), silently ----------
 say "setting labwc to start on login (silent)..."

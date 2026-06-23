@@ -1,0 +1,71 @@
+/* WILL OF THE CITY :: THE INDEX — GTK theme (overrides Adwaita-dark) */
+@define-color bg          #05080d;
+@define-color bg2         #0a0e16;
+@define-color panel       #0c1620;
+@define-color cyan        #5DADE2;
+@define-color cyanB       #85C5E8;
+@define-color cyanD       #3A7CA5;
+@define-color warn        #FF6B6B;
+@define-color fg          #85C5E8;
+
+@define-color theme_bg_color @bg;
+@define-color theme_base_color @bg2;
+@define-color theme_fg_color @fg;
+@define-color theme_text_color @cyanB;
+@define-color theme_selected_bg_color @cyan;
+@define-color theme_selected_fg_color #04141c;
+@define-color accent_bg_color @cyan;
+@define-color accent_fg_color #04141c;
+@define-color accent_color @cyanB;
+@define-color window_bg_color @bg;
+@define-color window_fg_color @fg;
+@define-color view_bg_color @bg2;
+@define-color view_fg_color @cyanB;
+@define-color headerbar_bg_color @panel;
+@define-color headerbar_fg_color @cyanB;
+@define-color card_bg_color @bg2;
+@define-color popover_bg_color @panel;
+@define-color destructive_bg_color @warn;
+
+* {
+  outline-color: @cyan;
+}
+window, .background { background-color: @bg; color: @fg; }
+headerbar, .titlebar {
+  background: @panel;
+  color: @cyanB;
+  border-bottom: 1px solid @cyan;
+  box-shadow: none;
+}
+button {
+  background: @bg2;
+  color: @cyanB;
+  border: 1px solid @cyanD;
+  border-radius: 0;
+}
+button:hover { background: @cyanD; color: #04141c; }
+button:active, button:checked { background: @cyan; color: #04141c; }
+entry, spinbutton, textview, .view {
+  background: @bg2; color: @cyanB;
+  border: 1px solid @cyanD; border-radius: 0;
+  caret-color: @cyan;
+}
+entry:focus { border-color: @cyan; }
+selection, *:selected { background-color: @cyan; color: #04141c; }
+.sidebar, treeview, list, row {
+  background-color: @bg2; color: @cyanB;
+}
+row:selected, treeview:selected { background-color: @cyan; color: #04141c; }
+scrollbar { background: @bg; }
+scrollbar slider { background: @cyanD; border-radius: 0; min-width: 8px; min-height: 8px; }
+scrollbar slider:hover { background: @cyan; }
+menu, popover, .menu, .context-menu {
+  background: @panel; color: @cyanB;
+  border: 1px solid @cyan;
+}
+menuitem:hover, .menu menuitem:hover { background: @cyan; color: #04141c; }
+notebook, tab { background: @bg; color: @cyanB; }
+tab:checked { box-shadow: inset 0 -2px @cyan; color: @cyanB; }
+progressbar progress, scale highlight { background-color: @cyan; }
+checkbutton check:checked, radiobutton radio:checked { background: @cyan; color: #04141c; }
+tooltip { background: @panel; color: @cyanB; border: 1px solid @cyan; }
