@@ -75,9 +75,15 @@ cat > "$CFG/labwc/autostart" <<'AUTO'
 #!/bin/sh
 # WILL OF THE CITY :: THE INDEX  —  labwc autostart
 LOCKER="$HOME/.config/labwc/index-lock"
-# LOCK FIRST so the desktop never flashes before it
+# 1) lock FIRST and WAIT until it's actually drawn (no desktop flash)
 sh "$LOCKER" &
-# wallpaper + bar load behind the lock (ready when you unlock)
+i=0
+while [ "$i" -lt 50 ]; do
+  pgrep -f 'lock/lock.qml' >/dev/null 2>&1 && break
+  sleep 0.1; i=$((i+1))
+done
+sleep 0.3
+# 2) load wallpaper + bar BEHIND the lock (ready when you unlock)
 swaybg -i "$HOME/.config/labwc/wall.png" -m fill &
 swayidle -w lock "sh $LOCKER" &
 quickshell -p "$HOME/.config/quickshell/shell.qml" &
