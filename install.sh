@@ -95,6 +95,11 @@ ENVF
 
 # ---------- 5. quickshell shell (bar + atmosphere + lock) ----------
 say "installing quickshell shell..."
+# preserve a previously-installed boot video across the wipe below
+SAVED_VID=""
+if [ -f "$CFG/quickshell/lock/assets/intro.mp4" ]; then
+  SAVED_VID="/tmp/.index-intro-saved.mp4"; cp -f "$CFG/quickshell/lock/assets/intro.mp4" "$SAVED_VID" 2>/dev/null || true
+fi
 rm -rf "$CFG/quickshell"; mkdir -p "$CFG/quickshell"
 cp -rf "$DIR/quickshell/." "$CFG/quickshell/"
 # distribute lock assets from the SINGLE source of truth (assets/) — so swapping
@@ -103,8 +108,28 @@ say "installing lock assets (font, profile, sounds)..."
 mkdir -p "$CFG/quickshell/lock/assets/sounds"
 cp -f "$DIR/assets/"*.ttf "$DIR/assets/"*.png "$DIR/assets/"*.jpg "$CFG/quickshell/lock/assets/" 2>/dev/null || true
 cp -f "$DIR/assets/sounds/"* "$CFG/quickshell/lock/assets/sounds/" 2>/dev/null || true
-# OPTIONAL local boot video (you supply assets/intro.mp4 yourself; it is NOT in the repo)
-[ -f "$DIR/assets/intro.mp4" ] && cp -f "$DIR/assets/intro.mp4" "$CFG/quickshell/lock/assets/intro.mp4" 2>/dev/null || true
+
+# OPTIONAL local boot video — find intro.mp4 wherever you put it; replace if present, else keep any saved one
+DEST_VID="$CFG/quickshell/lock/assets/intro.mp4"
+VID_SRC=""
+for c in \
+  "$DIR/assets/intro.mp4" \
+  "$DIR/intro.mp4" \
+  "$DIR/quickshell/lock/assets/intro.mp4" \
+  "$HOME/index-OS/assets/intro.mp4" \
+  "$HOME/intro.mp4" \
+  "$HOME/Videos/intro.mp4" \
+  "$HOME/Downloads/intro.mp4" ; do
+  [ -f "$c" ] && { VID_SRC="$c"; break; }
+done
+if [ -n "$VID_SRC" ]; then
+  cp -f "$VID_SRC" "$DEST_VID" 2>/dev/null && say "boot video installed from: $VID_SRC"
+elif [ -n "$SAVED_VID" ] && [ -f "$SAVED_VID" ]; then
+  cp -f "$SAVED_VID" "$DEST_VID" 2>/dev/null && note "kept your existing boot video"
+else
+  note "no intro.mp4 found — boot goes straight to the lock (drop one at ~/index-OS/assets/intro.mp4 and re-run)"
+fi
+rm -f "$SAVED_VID" 2>/dev/null || true
 
 # ---------- 6. launcher + fastfetch ----------
 mkdir -p "$CFG/wofi" "$CFG/fastfetch"
@@ -215,6 +240,7 @@ chk "$CFG/quickshell/shell.qml"                  "quickshell shell"
 chk "$CFG/quickshell/Bar.qml"                    "bar"
 chk "$CFG/quickshell/Atmosphere.qml"             "atmosphere"
 chk "$CFG/quickshell/lock/lock.qml"              "INDEX lock"
+[ -f "$CFG/quickshell/lock/assets/intro.mp4" ] && ok "boot video (intro.mp4)" || note "no boot video (optional)"
 sudo test -f /etc/systemd/system/getty@tty1.service.d/autologin.conf 2>/dev/null && ok "tty1 autologin (no text login)" || bad "tty1 autologin NOT set"
 command -v labwc  >/dev/null && ok "labwc installed"  || bad "labwc NOT installed"
 ( command -v quickshell >/dev/null || command -v qs >/dev/null ) && ok "quickshell installed" || bad "quickshell NOT installed - run: yay -S quickshell-git"
