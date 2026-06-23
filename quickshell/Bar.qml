@@ -223,7 +223,6 @@ PanelWindow {
                     Repeater {
                         model: [
                             { label: "LOCK",   cmd: ["sh","-c","pgrep -f lock/lock.qml || quickshell -p ~/.config/quickshell/lock/lock.qml"] },
-                            { label: "EXIT",   cmd: ["sh","-c","kill -TERM $(pidof labwc)"] },
                             { label: "REBOOT", cmd: ["systemctl", "reboot"] },
                             { label: "OFF",    cmd: ["systemctl", "poweroff"] }
                         ]
