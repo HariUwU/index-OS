@@ -82,6 +82,12 @@ ShellRoot {
                 audioOutput: AudioOutput { id: bgAudioOut; volume: 0.5 }
                 Component.onCompleted: play()
             }
+            // intro stinger/track — drop your own at assets/sounds/intro.mp3
+            MediaPlayer {
+                id: introMusic
+                source: Qt.resolvedUrl("assets/sounds/intro.mp3")
+                audioOutput: AudioOutput { id: introAudioOut; volume: 0.85 }
+            }
             SoundEffect { id: clickSound;   source: Qt.resolvedUrl("assets/sounds/click.wav");   volume: 0.8 }
             SoundEffect { id: successSound; source: Qt.resolvedUrl("assets/sounds/success.wav"); volume: 0.9 }
             SoundEffect { id: failSound;    source: Qt.resolvedUrl("assets/sounds/fail.wav");    volume: 0.9 }
@@ -163,19 +169,44 @@ ShellRoot {
                 anchors.fill: parent; z: 1000
                 visible: opacity > 0.001
                 opacity: 1.0
-                Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.InQuad } }
+                Behavior on opacity { NumberAnimation { duration: 800; easing.type: Easing.InQuad } }
 
                 Rectangle { anchors.fill: parent; color: "#020a0f" }
 
-                // click anywhere to skip the intro
+                // click/key anywhere to skip
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: {
-                        introSequence.stop(); emblemReveal.stop(); sweepAnim.stop()
-                        glitchTick.stop(); introTyper.stop()
-                        surf.introActive = false; introLayer.opacity = 0.0
-                        passwordInput.forceActiveFocus()
+                    onClicked: surf.skipIntro()
+                }
+
+                // concentric rings (the compass motif)
+                Item {
+                    id: ringField; anchors.centerIn: parent
+                    width: Math.min(introLayer.width, introLayer.height) * 0.9
+                    height: width
+                    opacity: 0.0; scale: 0.2
+                    Repeater {
+                        model: 4
+                        Rectangle {
+                            anchors.centerIn: parent
+                            property real f: 1.0 - index*0.20
+                            width: parent.width * f; height: width; radius: width/2
+                            color: "transparent"
+                            border.color: index === 0 ? "#5DADE2" : "#1f5675"
+                            border.width: index === 0 ? 3 : 2
+                            opacity: index === 0 ? 0.9 : 0.45
+                        }
                     }
+                }
+                // sweeping compass hand (pivots at screen center)
+                Rectangle {
+                    id: compassHand
+                    x: introLayer.width/2
+                    y: introLayer.height/2 - height/2
+                    width: Math.min(introLayer.width, introLayer.height) * 0.42
+                    height: 3; color: "#85C5E8"; antialiasing: true
+                    transformOrigin: Item.Left
+                    opacity: 0.0; rotation: -90
                 }
 
                 // glitch static bars
@@ -208,17 +239,20 @@ ShellRoot {
                 // emblem glow + emblem
                 Rectangle {
                     id: introGlow; anchors.centerIn: introEmblem
-                    width: 360; height: 360; radius: 180
+                    width: 380; height: 380; radius: 190
                     color: "#5DADE2"; opacity: 0.0
                 }
                 Image {
                     id: introEmblem
                     anchors.centerIn: parent
+                    anchors.verticalCenterOffset: -40
                     source: Qt.resolvedUrl("assets/Logo.png")
-                    sourceSize.width: 300; sourceSize.height: 300
+                    sourceSize.width: 260; sourceSize.height: 260
                     fillMode: Image.PreserveAspectFit
                     opacity: 0.0; scale: 0.75
                 }
+                // white flash on the emblem hit
+                Rectangle { id: hitFlash; anchors.fill: parent; color: "#85C5E8"; opacity: 0.0 }
 
                 // scanline sweep
                 Rectangle {
@@ -227,37 +261,69 @@ ShellRoot {
                     color: "#85C5E8"; opacity: 0.0; y: 0
                 }
 
-                // typed title
-                Text {
-                    id: introTitle
+                // title block
+                Column {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: introEmblem.bottom; anchors.topMargin: 26
-                    font.family: pixelFont.name; font.pixelSize: 26
-                    color: "#5DADE2"; text: ""
+                    anchors.top: introEmblem.bottom; anchors.topMargin: 22
+                    spacing: 8
+                    Text {
+                        id: introTitle
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        font.family: pixelFont.name; font.pixelSize: 46
+                        color: "#85C5E8"; style: Text.Outline; styleColor: "#5DADE2"
+                        text: ""
+                    }
+                    Text {
+                        id: introSub
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        font.family: pixelFont.name; font.pixelSize: 24
+                        color: "#5DADE2"; text: ":: THE INDEX ::"; opacity: 0.0
+                    }
+                    Text {
+                        id: introQuote
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        font.family: pixelFont.name; font.pixelSize: 17
+                        color: "#3A7CA5"
+                        text: "\"By the geometry of inevitability, the prey gathers here.\""
+                        opacity: 0.0
+                    }
                 }
-                property string introFull: ">_ THE INDEX :: AUTHORIZATION REQUIRED_"
+                property string introFull: "WILL OF THE CITY"
                 property int introIdx: 0
                 Timer {
-                    id: introTyper; interval: 42; repeat: true; running: false
+                    id: introTyper; interval: 60; repeat: true; running: false
                     onTriggered: {
                         if (introLayer.introIdx < introLayer.introFull.length) {
                             introTitle.text += introLayer.introFull.charAt(introLayer.introIdx)
                             introLayer.introIdx++
-                            if (introLayer.introIdx % 3 === 0) surf.sfx("click.wav")
-                        } else { introTyper.stop(); introEndTimer.start() }
+                            surf.sfx("click.wav")
+                        } else { introTyper.stop(); surf.sfx("success.wav"); introTail.start() }
                     }
                 }
-                Timer { id: introEndTimer; interval: 700; repeat: false
-                    onTriggered: { surf.introActive = false; introLayer.opacity = 0.0; introFocusTimer.start() } }
-                Timer { id: introFocusTimer; interval: 650; repeat: false
+                Timer { id: introFocusTimer; interval: 700; repeat: false
                     onTriggered: passwordInput.forceActiveFocus() }
             }
 
-            // emblem reveal (started by the sequence)
+            // ---- intro animations (siblings, targeted by id) ----
+            ParallelAnimation {
+                id: ringsReveal
+                NumberAnimation { target: ringField; property: "opacity"; from: 0; to: 0.95; duration: 500 }
+                NumberAnimation { target: ringField; property: "scale"; from: 0.2; to: 1.0; duration: 850; easing.type: Easing.OutCubic }
+            }
+            SequentialAnimation {
+                id: handSweep
+                NumberAnimation { target: compassHand; property: "opacity"; to: 1.0; duration: 150 }
+                NumberAnimation { target: compassHand; property: "rotation"; from: -90; to: 270; duration: 1150; easing.type: Easing.InOutCubic }
+                NumberAnimation { target: compassHand; property: "opacity"; to: 0.0; duration: 300 }
+            }
             ParallelAnimation {
                 id: emblemReveal
-                NumberAnimation { target: introEmblem; property: "opacity"; from: 0; to: 1; duration: 500 }
-                NumberAnimation { target: introEmblem; property: "scale"; from: 0.75; to: 1.0; duration: 600; easing.type: Easing.OutBack }
+                NumberAnimation { target: introEmblem; property: "opacity"; from: 0; to: 1; duration: 450 }
+                NumberAnimation { target: introEmblem; property: "scale"; from: 0.75; to: 1.0; duration: 550; easing.type: Easing.OutBack }
+                SequentialAnimation {
+                    NumberAnimation { target: hitFlash; property: "opacity"; to: 0.5; duration: 90 }
+                    NumberAnimation { target: hitFlash; property: "opacity"; to: 0.0; duration: 350 }
+                }
                 SequentialAnimation {
                     NumberAnimation { target: introGlow; property: "opacity"; from: 0; to: 0.35; duration: 300 }
                     NumberAnimation { target: introGlow; property: "opacity"; to: 0.12; duration: 500 }
@@ -269,18 +335,45 @@ ShellRoot {
                 NumberAnimation { target: introSweep; property: "y"; from: 0; to: surf.height; duration: 550; easing.type: Easing.InOutQuad }
                 NumberAnimation { target: introSweep; property: "opacity"; to: 0.0; duration: 120 }
             }
+            // tail: reveal subtitle + quote, sweep, dissolve to lock
+            SequentialAnimation {
+                id: introTail
+                NumberAnimation { target: introSub; property: "opacity"; to: 1.0; duration: 350 }
+                PauseAnimation { duration: 200 }
+                NumberAnimation { target: introQuote; property: "opacity"; to: 1.0; duration: 500 }
+                PauseAnimation { duration: 1100 }
+                ScriptAction { script: sweepAnim.start() }
+                PauseAnimation { duration: 500 }
+                ScriptAction { script: surf.endIntro() }
+            }
 
             // master intro timeline
             SequentialAnimation {
                 id: introSequence
-                PauseAnimation { duration: 350 }
+                ScriptAction { script: { introMusic.play(); bgAudioOut.volume = 0.0 } }
+                PauseAnimation { duration: 300 }
                 ScriptAction { script: { glitchField.opacity = 1.0; glitchTick.start(); surf.sfx("check.wav") } }
+                PauseAnimation { duration: 600 }
+                ScriptAction { script: { glitchTick.stop(); glitchField.opacity = 0.0; ringsReveal.start(); handSweep.start() } }
                 PauseAnimation { duration: 700 }
-                ScriptAction { script: { glitchTick.stop(); glitchField.opacity = 0.0; surf.sfx("click.wav"); emblemReveal.start() } }
-                PauseAnimation { duration: 500 }
-                ScriptAction { script: sweepAnim.start() }
-                PauseAnimation { duration: 650 }
+                ScriptAction { script: { emblemReveal.start(); surf.sfx("success.wav") } }
+                PauseAnimation { duration: 700 }
                 ScriptAction { script: introTyper.start() }
+            }
+
+            // intro control helpers
+            function endIntro() {
+                surf.introActive = false
+                introLayer.opacity = 0.0
+                introMusic.stop()
+                bgAudioOut.volume = volSettings.volume
+                if (bgMusic.playbackState !== MediaPlayer.PlayingState) bgMusic.play()
+                introFocusTimer.start()
+            }
+            function skipIntro() {
+                introSequence.stop(); introTail.stop(); ringsReveal.stop(); handSweep.stop()
+                emblemReveal.stop(); sweepAnim.stop(); glitchTick.stop(); introTyper.stop()
+                endIntro()
             }
 
             // ======================= MAIN UI =====================
@@ -711,7 +804,16 @@ ShellRoot {
                 var v = volSettings.volume
                 volTrack.volValue = v; bgAudioOut.volume = v
                 clickSound.volume = v; successSound.volume = v; failSound.volume = v; checkSound.volume = v
-                introSequence.start()   // cinematic cold-open; focuses the field when done
+                // once-per-boot intro gate: launcher writes /tmp/.index-intro = 1 first boot, 0 after
+                var play = false
+                try {
+                    var xhr = new XMLHttpRequest()
+                    xhr.open("GET", "file:///tmp/.index-intro", false)
+                    xhr.send(null)
+                    play = (xhr.responseText.trim() === "1")
+                } catch (e) { play = true }   // flag missing (e.g. manual run) -> play once
+                if (play) introSequence.start()
+                else { surf.introActive = false; introLayer.opacity = 0.0; passwordInput.forceActiveFocus() }
             }
         }
     }

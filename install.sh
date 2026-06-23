@@ -58,6 +58,10 @@ cat > "$CFG/labwc/index-lock" <<'LOCKER'
 #!/bin/sh
 # WILL OF THE CITY :: THE INDEX  —  lock launcher (boot-safe, idempotent)
 pgrep -f 'lock/lock.qml' >/dev/null 2>&1 && exit 0
+# once-per-boot intro flag (BOOTED marker in /tmp, wiped each reboot)
+BOOTED="/tmp/.index-booted-$(id -u)"
+FLAG="/tmp/.index-intro"
+if [ -e "$BOOTED" ]; then echo 0 > "$FLAG"; else echo 1 > "$FLAG"; : > "$BOOTED"; fi
 i=0
 while [ -z "$WAYLAND_DISPLAY" ] && [ "$i" -lt 30 ]; do sleep 0.2; i=$((i+1)); done
 QS="$(command -v quickshell 2>/dev/null || command -v qs 2>/dev/null)"

@@ -57,7 +57,8 @@ dbus-run-session labwc
 
 All lock assets live in ONE place: `assets/` (font, `Logo.png`, `DefaultProfile.jpg`,
 `Power.png`, `Restart.png`, `sounds/`). To change the lock background song, replace
-`assets/sounds/bg.mp3`, then re-run `./install.sh`. The installer copies `assets/`
+`assets/sounds/bg.mp3`. For the boot **intro** track, add `assets/sounds/intro.mp3`.
+Then re-run `./install.sh`. The installer copies `assets/`
 into the lock at install time, so the swap takes effect. Don't edit
 `quickshell/lock/assets/` directly — it's generated.
 
