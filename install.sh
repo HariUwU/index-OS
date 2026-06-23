@@ -196,15 +196,10 @@ toolbutton_style=4
 QTCONF
 done
 
-# Firefox: disable its OWN titlebar so only the labwc cyan one shows (no double bar)
-if [ -d "$HOME/.mozilla/firefox" ]; then
-  for prof in "$HOME"/.mozilla/firefox/*.default*/ "$HOME"/.mozilla/firefox/*.default-release/; do
-    [ -d "$prof" ] && cp -f "$DIR/labwc/app-fixes/firefox-user.js" "${prof}user.js" 2>/dev/null || true
-  done
-  note "Firefox: own titlebar disabled (labwc titlebar only)"
-else
-  note "Firefox not set up yet — its user.js will apply after you launch Firefox once + re-run install"
-fi
+# Browsers: make Firefox-family + Chromium-family use ONLY the labwc titlebar (no double bar)
+say "fixing browser titlebars (Firefox / Chromium families)..."
+sh "$DIR/labwc/app-fixes/apply-browser-fixes.sh" 2>/dev/null || true
+note "if a browser was open or not yet set up, re-run after launching it once"
 
 # ---------- 7. auto-start labwc on login (TTY1), silently ----------
 say "setting labwc to start on login (silent)..."
