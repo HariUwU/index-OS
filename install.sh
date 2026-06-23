@@ -173,6 +173,7 @@ cp -f "$DIR/labwc/theme/the-index-gtk/gtk-3.0/gtk.css" "$CFG/gtk-3.0/gtk.css" 2>
 cp -f "$DIR/labwc/theme/the-index-gtk/gtk-4.0/gtk.css" "$CFG/gtk-4.0/gtk.css" 2>/dev/null || true
 command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
 command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface gtk-theme 'the-index' 2>/dev/null || true
+command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.wm.preferences button-layout ':' 2>/dev/null || true
 
 # Qt apps — recolor to the INDEX palette via qt6ct/qt5ct (custom palette, Fusion base)
 say "theming Qt apps (qt6ct/qt5ct INDEX palette)..."
