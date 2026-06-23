@@ -2,3 +2,7 @@
 *.log
 *.swp
 .DS_Store
+
+# user-supplied local boot video — never commit (copyright)
+assets/intro.mp4
+quickshell/lock/assets/intro.mp4

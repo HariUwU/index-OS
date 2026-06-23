@@ -103,6 +103,8 @@ say "installing lock assets (font, profile, sounds)..."
 mkdir -p "$CFG/quickshell/lock/assets/sounds"
 cp -f "$DIR/assets/"*.ttf "$DIR/assets/"*.png "$DIR/assets/"*.jpg "$CFG/quickshell/lock/assets/" 2>/dev/null || true
 cp -f "$DIR/assets/sounds/"* "$CFG/quickshell/lock/assets/sounds/" 2>/dev/null || true
+# OPTIONAL local boot video (you supply assets/intro.mp4 yourself; it is NOT in the repo)
+[ -f "$DIR/assets/intro.mp4" ] && cp -f "$DIR/assets/intro.mp4" "$CFG/quickshell/lock/assets/intro.mp4" 2>/dev/null || true
 
 # ---------- 6. launcher + fastfetch ----------
 mkdir -p "$CFG/wofi" "$CFG/fastfetch"
