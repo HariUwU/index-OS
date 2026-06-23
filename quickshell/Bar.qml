@@ -18,6 +18,7 @@ PanelWindow {
     anchors { top: true; left: true; right: true }
     implicitHeight: 32
     color: "transparent"
+    WlrLayershell.keyboardFocus: bar.menuOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     readonly property color cyan:  "#5DADE2"
     readonly property color cyanB: "#85C5E8"
@@ -102,6 +103,30 @@ PanelWindow {
 
             RowLayout {
                 spacing: 10
+                // volume control — scroll to change, click to mute (wireplumber)
+                Text {
+                    id: volText
+                    property int vol: 50
+                    property bool muted: false
+                    text: muted ? "VOL MUTE" : "VOL " + vol
+                    font.family: bar.pixel; font.pixelSize: 13
+                    color: muted ? bar.warn : bar.cyanD
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        acceptedButtons: Qt.LeftButton
+                        onClicked: {
+                            volText.muted = !volText.muted
+                            Quickshell.execDetached(["wpctl","set-mute","@DEFAULT_AUDIO_SINK@","toggle"])
+                        }
+                        onWheel: function(w) {
+                            var d = w.angleDelta.y > 0 ? 5 : -5
+                            volText.vol = Math.max(0, Math.min(100, volText.vol + d))
+                            volText.muted = false
+                            Quickshell.execDetached(["wpctl","set-volume","@DEFAULT_AUDIO_SINK@", (volText.vol/100).toFixed(2)])
+                        }
+                    }
+                }
                 Repeater {
                     model: SystemTray.items
                     delegate: Image {

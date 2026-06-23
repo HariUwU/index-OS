@@ -23,7 +23,7 @@ if command -v pacman >/dev/null; then
   sudo pacman -S --needed --noconfirm \
       labwc swaybg swayidle foot wofi wtype thunar \
       qt6-multimedia qt6-svg qt6-declarative fastfetch wireplumber ffmpeg gst-libav gst-plugins-good \
-      brightnessctl ttf-dejavu base-devel cmake meson git 2>/dev/null \
+      brightnessctl ttf-dejavu gnome-themes-extra adwaita-qt5 adwaita-qt6 base-devel cmake meson git 2>/dev/null \
       || note "(some packages may have failed - continuing)"
   if ! command -v quickshell >/dev/null && ! command -v qs >/dev/null; then
     say "installing quickshell (AUR)..."
@@ -149,11 +149,23 @@ if [ -f "$DEST_VID" ]; then
   fi
 fi
 
-# ---------- 6. launcher + fastfetch ----------
+# ---------- 6. launcher + fastfetch + foot + dark theme ----------
 mkdir -p "$CFG/wofi" "$CFG/fastfetch"
 cp -f "$DIR/wofi/config" "$CFG/wofi/" 2>/dev/null || true
 cp -f "$DIR/wofi/style.css" "$CFG/wofi/" 2>/dev/null || true
 cp -rf "$DIR/fastfetch/." "$CFG/fastfetch/" 2>/dev/null || true
+
+# foot terminal — THE INDEX cyan CRT theme
+say "theming foot + forcing dark on apps..."
+mkdir -p "$CFG/foot"
+cp -f "$DIR/labwc/config/foot.ini" "$CFG/foot/foot.ini" 2>/dev/null || true
+
+# GTK 3/4 dark theme so apps (Thunar, etc.) match the desktop
+mkdir -p "$CFG/gtk-3.0" "$CFG/gtk-4.0"
+cp -f "$DIR/labwc/config/gtk/settings.ini" "$CFG/gtk-3.0/settings.ini" 2>/dev/null || true
+cp -f "$DIR/labwc/config/gtk/settings.ini" "$CFG/gtk-4.0/settings.ini" 2>/dev/null || true
+command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
+command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark' 2>/dev/null || true
 
 # ---------- 7. auto-start labwc on login (TTY1), silently ----------
 say "setting labwc to start on login (silent)..."

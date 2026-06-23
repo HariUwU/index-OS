@@ -222,7 +222,7 @@ ShellRoot {
 
             // intro control helpers
             function startIntro() {
-                bgAudioOut.volume = 0.0
+                bgMusic.stop()              // fully stop the lock music during the intro
                 introVideo.play()
             }
             function endIntro() {
@@ -230,7 +230,7 @@ ShellRoot {
                 introLayer.opacity = 0.0
                 introVideo.stop()
                 bgAudioOut.volume = volSettings.volume
-                if (bgMusic.playbackState !== MediaPlayer.PlayingState) bgMusic.play()
+                bgMusic.play()              // start the lock music now that the intro is done
                 introFocusTimer.start()
             }
             function skipIntro() { endIntro() }
