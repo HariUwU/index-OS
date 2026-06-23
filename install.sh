@@ -23,7 +23,7 @@ if command -v pacman >/dev/null; then
   sudo pacman -S --needed --noconfirm \
       labwc swaybg swayidle foot wofi wtype thunar \
       qt6-multimedia qt6-svg qt6-declarative fastfetch wireplumber ffmpeg gst-libav gst-plugins-good \
-      brightnessctl ttf-dejavu gnome-themes-extra adwaita-qt5 adwaita-qt6 base-devel cmake meson git 2>/dev/null \
+      brightnessctl ttf-dejavu gnome-themes-extra qt6ct qt5ct base-devel cmake meson git 2>/dev/null \
       || note "(some packages may have failed - continuing)"
   if ! command -v quickshell >/dev/null && ! command -v qs >/dev/null; then
     say "installing quickshell (AUR)..."
@@ -173,6 +173,28 @@ cp -f "$DIR/labwc/theme/the-index-gtk/gtk-3.0/gtk.css" "$CFG/gtk-3.0/gtk.css" 2>
 cp -f "$DIR/labwc/theme/the-index-gtk/gtk-4.0/gtk.css" "$CFG/gtk-4.0/gtk.css" 2>/dev/null || true
 command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
 command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface gtk-theme 'the-index' 2>/dev/null || true
+
+# Qt apps — recolor to the INDEX palette via qt6ct/qt5ct (custom palette, Fusion base)
+say "theming Qt apps (qt6ct/qt5ct INDEX palette)..."
+for V in qt6ct qt5ct; do
+  mkdir -p "$CFG/$V/colors"
+  cp -f "$DIR/labwc/config/$V/colors/the-index.conf" "$CFG/$V/colors/the-index.conf" 2>/dev/null || true
+  cat > "$CFG/$V/$V.conf" <<QTCONF
+[Appearance]
+color_scheme_path=$HOME/.config/$V/colors/the-index.conf
+custom_palette=true
+standard_dialogs=default
+style=Fusion
+
+[Fonts]
+fixed="Perfect DOS VGA 437,11,-1,5,50,0,0,0,0,0"
+general="Perfect DOS VGA 437,11,-1,5,50,0,0,0,0,0"
+
+[Interface]
+menus_have_icons=true
+toolbutton_style=4
+QTCONF
+done
 
 # ---------- 7. auto-start labwc on login (TTY1), silently ----------
 say "setting labwc to start on login (silent)..."
