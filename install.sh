@@ -22,7 +22,7 @@ if command -v pacman >/dev/null; then
   say "installing packages..."
   sudo pacman -S --needed --noconfirm \
       labwc swaybg swayidle foot wofi wtype thunar \
-      qt6-multimedia qt6-svg qt6-declarative fastfetch wireplumber \
+      qt6-multimedia qt6-svg qt6-declarative fastfetch wireplumber ffmpeg gst-libav gst-plugins-good \
       brightnessctl ttf-dejavu base-devel cmake meson git 2>/dev/null \
       || note "(some packages may have failed - continuing)"
   if ! command -v quickshell >/dev/null && ! command -v qs >/dev/null; then
@@ -129,6 +129,25 @@ else
   note "no intro.mp4 found — boot goes straight to the lock (drop one at ~/index-OS/assets/intro.mp4 and re-run)"
 fi
 rm -f "$SAVED_VID" 2>/dev/null || true
+
+# ADAPTIVE: if the GPU is software/virtio (no real accel), downscale the video to 720p30
+# so it doesn't freeze. On real hardware the full-quality file is kept untouched.
+if [ -f "$DEST_VID" ]; then
+  SOFTGPU=0
+  if command -v lspci >/dev/null 2>&1 && lspci 2>/dev/null | grep -qiE 'virtio|qxl|vga.*(cirrus|bochs|vmware)'; then SOFTGPU=1; fi
+  grep -qiE 'virtio|llvmpipe|software' /sys/class/drm/*/device/uevent 2>/dev/null && SOFTGPU=1
+  [ -e /dev/dri/renderD128 ] || SOFTGPU=1   # no render node = no accel
+  if [ "$SOFTGPU" = "1" ] && command -v ffmpeg >/dev/null 2>&1; then
+    say "software/virtio GPU detected — transcoding boot video to 720p30 (smooth in VM)..."
+    if ffmpeg -y -i "$DEST_VID" -vf "scale=-2:720" -r 30 -c:v libx264 -preset veryfast -crf 24 -c:a aac "$DEST_VID.vm.mp4" >/dev/null 2>&1; then
+      mv -f "$DEST_VID.vm.mp4" "$DEST_VID" && note "boot video downscaled for smooth software-render playback"
+    else
+      rm -f "$DEST_VID.vm.mp4" 2>/dev/null; note "transcode failed — keeping original (may stutter in VM; install ffmpeg)"
+    fi
+  elif [ "$SOFTGPU" = "1" ]; then
+    note "software GPU but no ffmpeg — video may freeze in VM. install ffmpeg + re-run to auto-downscale"
+  fi
+fi
 
 # ---------- 6. launcher + fastfetch ----------
 mkdir -p "$CFG/wofi" "$CFG/fastfetch"
