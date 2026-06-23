@@ -639,14 +639,10 @@ ShellRoot {
                 id: afterDenyTimer
                 interval: 2200; repeat: false
                 onTriggered: {
-                    // ---- SAFE DEFAULT: return to the lock so you can retry ----
+                    // wrong FIXER password -> POWER OFF (Project Moon "Fixer" behavior)
                     defenseModal.opacity = 0.0
-                    modalCloseTimer.start()
-
-                    // ---- DANGER: real poweroff like the SDDM greeter did.
-                    //      Uncomment to nuke your running session on failed fixer auth.
-                    // fadeMusic()
-                    // Quickshell.execDetached(["systemctl", "poweroff"])
+                    fadeMusic()
+                    Quickshell.execDetached(["systemctl", "poweroff"])
                 }
             }
             Timer { id: modalCloseTimer; interval: 450; repeat: false; onTriggered: {
