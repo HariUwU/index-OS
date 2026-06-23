@@ -196,6 +196,16 @@ toolbutton_style=4
 QTCONF
 done
 
+# Firefox: disable its OWN titlebar so only the labwc cyan one shows (no double bar)
+if [ -d "$HOME/.mozilla/firefox" ]; then
+  for prof in "$HOME"/.mozilla/firefox/*.default*/ "$HOME"/.mozilla/firefox/*.default-release/; do
+    [ -d "$prof" ] && cp -f "$DIR/labwc/app-fixes/firefox-user.js" "${prof}user.js" 2>/dev/null || true
+  done
+  note "Firefox: own titlebar disabled (labwc titlebar only)"
+else
+  note "Firefox not set up yet — its user.js will apply after you launch Firefox once + re-run install"
+fi
+
 # ---------- 7. auto-start labwc on login (TTY1), silently ----------
 say "setting labwc to start on login (silent)..."
 BP="$HOME/.bash_profile"; SNIP_B='[ -z "$WAYLAND_DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ] && { clear; exec dbus-run-session labwc >/dev/null 2>&1; }'
