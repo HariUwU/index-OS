@@ -18,7 +18,6 @@ PanelWindow {
     anchors { top: true; left: true; right: true }
     implicitHeight: 32
     color: "transparent"
-    WlrLayershell.keyboardFocus: bar.menuOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     readonly property color cyan:  "#5DADE2"
     readonly property color cyanB: "#85C5E8"
@@ -155,15 +154,19 @@ PanelWindow {
     }
 
     // ===================== START MENU =====================
-    PopupWindow {
+    PanelWindow {
         id: startMenu
         visible: bar.menuOpen
-        anchor.window: bar
-        anchor.rect.x: 8
-        anchor.rect.y: bar.implicitHeight
+        anchors { top: true; left: true }
+        margins { top: bar.implicitHeight; left: 8 }
         implicitWidth: 340
         implicitHeight: 480
         color: "transparent"
+        exclusiveZone: 0
+        WlrLayershell.layer: WlrLayer.Overlay
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+        WlrLayershell.namespace: "index-startmenu"
+        onVisibleChanged: if (visible) search.forceActiveFocus()
 
         property string query: ""
         property var shownApps: {

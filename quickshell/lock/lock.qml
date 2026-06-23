@@ -80,7 +80,8 @@ ShellRoot {
                 source: Qt.resolvedUrl("assets/sounds/bg.mp3")
                 loops: MediaPlayer.Infinite
                 audioOutput: AudioOutput { id: bgAudioOut; volume: 0.5 }
-                Component.onCompleted: play()
+                // NOTE: do NOT auto-play here — it would overlap the intro video audio.
+                // bgMusic is started by endIntro() (after the intro) or the no-intro branch.
             }
             SoundEffect { id: clickSound;   source: Qt.resolvedUrl("assets/sounds/click.wav");   volume: 0.8 }
             SoundEffect { id: successSound; source: Qt.resolvedUrl("assets/sounds/success.wav"); volume: 0.9 }
@@ -668,7 +669,7 @@ ShellRoot {
                         play = (String(flag) === "1")
                 } catch (e) { play = true }   // env API missing -> just play
                 if (play) startIntro()
-                else { surf.introActive = false; introLayer.opacity = 0.0; passwordInput.forceActiveFocus() }
+                else { surf.introActive = false; introLayer.opacity = 0.0; bgMusic.play(); passwordInput.forceActiveFocus() }
             }
         }
     }
