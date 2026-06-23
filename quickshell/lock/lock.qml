@@ -85,10 +85,13 @@ ShellRoot {
             SoundEffect { id: successSound; source: Qt.resolvedUrl("assets/sounds/success.wav"); volume: 0.9 }
             SoundEffect { id: failSound;    source: Qt.resolvedUrl("assets/sounds/fail.wav");    volume: 0.9 }
             SoundEffect { id: checkSound;   source: Qt.resolvedUrl("assets/sounds/check.wav");   volume: 0.8 }
-            function playClick()   { clickSound.play() }
-            function playSuccess() { successSound.play() }
-            function playFail()    { failSound.play() }
-            function playCheck()   { checkSound.play() }
+            // SoundEffect is flaky on Wayland lock surfaces -> play via pw-play/paplay (PipeWire)
+            function sfxPath(f) { return Qt.resolvedUrl("assets/sounds/" + f).toString().replace("file://", "") }
+            function sfx(f) { Quickshell.execDetached(["sh","-c","pw-play '"+sfxPath(f)+"' 2>/dev/null || paplay '"+sfxPath(f)+"' 2>/dev/null || aplay '"+sfxPath(f)+"' 2>/dev/null"]) }
+            function playClick()   { sfx("click.wav") }
+            function playSuccess() { sfx("success.wav") }
+            function playFail()    { sfx("fail.wav") }
+            function playCheck()   { sfx("check.wav") }
             NumberAnimation { id: musicFadeOut; target: bgAudioOut; property: "volume"; to: 0.0; duration: 1500 }
             function fadeMusic() { musicFadeOut.start() }
 
@@ -405,6 +408,7 @@ ShellRoot {
 
                 function startSequence() {
                     visible = true; opacity = 1.0
+                    surf.passwordCheckRunning = false   // 3-fail path left this true -> modal input was disabled
                     typeIndex = 0; warningTypeText.text = ""
                     answerLine.visible = false; answerLine.text = ""
                     finalInputArea.visible = false; defensePassword.text = ""

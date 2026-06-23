@@ -93,6 +93,12 @@ ENVF
 say "installing quickshell shell..."
 rm -rf "$CFG/quickshell"; mkdir -p "$CFG/quickshell"
 cp -rf "$DIR/quickshell/." "$CFG/quickshell/"
+# distribute lock assets from the SINGLE source of truth (assets/) — so swapping
+# assets/sounds/bg.mp3 (or the font/profile) actually takes effect on the lock.
+say "installing lock assets (font, profile, sounds)..."
+mkdir -p "$CFG/quickshell/lock/assets/sounds"
+cp -f "$DIR/assets/"*.ttf "$DIR/assets/"*.png "$DIR/assets/"*.jpg "$CFG/quickshell/lock/assets/" 2>/dev/null || true
+cp -f "$DIR/assets/sounds/"* "$CFG/quickshell/lock/assets/sounds/" 2>/dev/null || true
 
 # ---------- 6. launcher + fastfetch ----------
 mkdir -p "$CFG/wofi" "$CFG/fastfetch"
