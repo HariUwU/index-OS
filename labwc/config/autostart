@@ -1,8 +1,8 @@
 #!/bin/sh
 # WILL OF THE CITY :: THE INDEX  —  labwc autostart
-LOCK='pgrep -f lock/lock.qml || quickshell -p $HOME/.config/quickshell/lock/lock.qml'
+LOCKER="$HOME/.config/labwc/index-lock"
 swaybg -i "$HOME/.config/labwc/wall.png" -m fill &
-swayidle -w lock "$LOCK" &
+swayidle -w lock "sh $LOCKER" &
 quickshell -p "$HOME/.config/quickshell/shell.qml" &
-# lock on every boot: INDEX lock greets you before the desktop
-sleep 1; sh -c "$LOCK" &
+# lock on every boot (boot-safe launcher waits for the compositor + retries)
+sh "$LOCKER" &

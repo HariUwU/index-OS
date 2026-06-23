@@ -54,15 +54,32 @@ cp -f "$DIR/labwc/config/rc.xml"   "$CFG/labwc/rc.xml"
 cp -f "$DIR/labwc/config/menu.xml" "$CFG/labwc/menu.xml"
 cp -f "$DIR/wallpaper/the-index.png" "$CFG/labwc/wall.png"
 
+cat > "$CFG/labwc/index-lock" <<'LOCKER'
+#!/bin/sh
+# WILL OF THE CITY :: THE INDEX  —  lock launcher (boot-safe, idempotent)
+pgrep -f 'lock/lock.qml' >/dev/null 2>&1 && exit 0
+i=0
+while [ -z "$WAYLAND_DISPLAY" ] && [ "$i" -lt 30 ]; do sleep 0.2; i=$((i+1)); done
+QS="$(command -v quickshell 2>/dev/null || command -v qs 2>/dev/null)"
+[ -z "$QS" ] && exit 1
+n=0
+while [ "$n" -lt 12 ]; do
+  "$QS" -p "$HOME/.config/quickshell/lock/lock.qml" && exit 0
+  n=$((n+1)); sleep 0.4
+done
+exit 1
+LOCKER
+chmod +x "$CFG/labwc/index-lock"
+
 cat > "$CFG/labwc/autostart" <<'AUTO'
 #!/bin/sh
 # WILL OF THE CITY :: THE INDEX  —  labwc autostart
-LOCK='pgrep -f lock/lock.qml || quickshell -p $HOME/.config/quickshell/lock/lock.qml'
+LOCKER="$HOME/.config/labwc/index-lock"
 swaybg -i "$HOME/.config/labwc/wall.png" -m fill &
-swayidle -w lock "$LOCK" &
+swayidle -w lock "sh $LOCKER" &
 quickshell -p "$HOME/.config/quickshell/shell.qml" &
-# lock on every boot: INDEX lock greets you before the desktop
-sleep 1; sh -c "$LOCK" &
+# lock on every boot (boot-safe launcher waits for the compositor + retries)
+sh "$LOCKER" &
 AUTO
 chmod +x "$CFG/labwc/autostart"
 
@@ -103,6 +120,7 @@ echo; say "verifying install:"
 chk(){ [ -s "$1" ] && ok "$2" || bad "$2  (MISSING: $1)"; }
 chk "$CFG/labwc/rc.xml"                          "labwc rc.xml"
 chk "$CFG/labwc/autostart"                       "labwc autostart"
+chk "$CFG/labwc/index-lock"                      "lock launcher (boot-safe)"
 chk "$CFG/labwc/wall.png"                        "wallpaper"
 chk "$THEMES/the-index/labwc/themerc"            "titlebar themerc"
 chk "$THEMES/the-index/labwc/close-active.png"   "bracket button [X]"

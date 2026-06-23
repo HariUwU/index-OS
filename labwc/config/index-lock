@@ -1,0 +1,16 @@
+#!/bin/sh
+# WILL OF THE CITY :: THE INDEX  —  lock launcher (boot-safe, idempotent)
+# already locked? do nothing.
+pgrep -f 'lock/lock.qml' >/dev/null 2>&1 && exit 0
+# wait for the wayland socket (boot race: labwc may not be ready yet)
+i=0
+while [ -z "$WAYLAND_DISPLAY" ] && [ "$i" -lt 30 ]; do sleep 0.2; i=$((i+1)); done
+QS="$(command -v quickshell 2>/dev/null || command -v qs 2>/dev/null)"
+[ -z "$QS" ] && exit 1
+# retry: the session-lock manager can lag a beat behind compositor start
+n=0
+while [ "$n" -lt 12 ]; do
+  "$QS" -p "$HOME/.config/quickshell/lock/lock.qml" && exit 0
+  n=$((n+1)); sleep 0.4
+done
+exit 1
