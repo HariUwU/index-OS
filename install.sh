@@ -152,28 +152,54 @@ fi
 # hush the getty login banner (no "<host> login:" flash)
 sudo touch /etc/issue 2>/dev/null && sudo cp /etc/issue /etc/issue.index-bak 2>/dev/null && echo -n "" | sudo tee /etc/issue >/dev/null 2>&1 || true
 
-# ---------- 7c. SILENT BOOT (quiet kernel messages) ----------
-# best-effort: hides kernel/systemd boot text. Backs up before touching anything.
-say "quieting boot messages (silent boot)..."
-QUIET="quiet loglevel=3 systemd.show_status=false rd.udev.log_level=3 vt.global_cursor_default=0"
-if [ -d /boot/loader/entries ]; then           # systemd-boot
-  for e in /boot/loader/entries/*.conf; do
-    [ -f "$e" ] || continue
-    grep -q "loglevel=3" "$e" 2>/dev/null && continue
-    sudo cp "$e" "$e.index-bak" 2>/dev/null || true
-    sudo sed -i "s/^\(options .*\)$/\1 $QUIET/" "$e" 2>/dev/null || true
-  done
-  note "systemd-boot: added quiet params (backups: *.index-bak)"
-elif [ -f /etc/default/grub ]; then            # GRUB
-  if ! grep -q "loglevel=3" /etc/default/grub; then
-    sudo cp /etc/default/grub /etc/default/grub.index-bak 2>/dev/null || true
-    sudo sed -i "s/\(GRUB_CMDLINE_LINUX_DEFAULT=\"[^\"]*\)\"/\1 $QUIET\"/" /etc/default/grub 2>/dev/null || true
-    if command -v grub-mkconfig >/dev/null; then sudo grub-mkconfig -o /boot/grub/grub.cfg 2>/dev/null || true; fi
-  fi
-  note "GRUB: added quiet params (backup: /etc/default/grub.index-bak)"
-else
-  note "unknown bootloader — skipped quiet params (boot text will still show)"
+# ---------- 7c. SILENT BOOT (quiet kernel messages) — UNIVERSAL ----------
+# Covers every bootloader: edits whichever cmdline source the system actually
+# uses (systemd-boot entries, GRUB, Limine, UKI /etc/kernel/cmdline,
+# /etc/cmdline.d). Backs up before touching anything. Also quiets the console.
+say "quieting boot messages (silent boot, all bootloaders)..."
+QUIET="quiet loglevel=3 systemd.show_status=false rd.udev.log_level=3 vt.global_cursor_default=0 udev.log_level=3"
+addquiet(){ # $1=file — returns 0 (skip) if already done, else backs up + returns 1
+  [ -f "$1" ] || return 0
+  grep -q "loglevel=3" "$1" 2>/dev/null && return 0
+  sudo cp "$1" "$1.index-bak" 2>/dev/null || true
+  return 1
+}
+
+# 1) systemd-boot loader entries
+if [ -d /boot/loader/entries ]; then
+  for e in /boot/loader/entries/*.conf; do addquiet "$e" || sudo sed -i "s/^\(options .*\)$/\1 $QUIET/" "$e" 2>/dev/null || true; done
+  note "systemd-boot entries patched"
 fi
+# 2) GRUB
+if [ -f /etc/default/grub ]; then
+  if addquiet /etc/default/grub; then :; else
+    sudo sed -i "s/\(GRUB_CMDLINE_LINUX_DEFAULT=\"[^\"]*\)\"/\1 $QUIET\"/" /etc/default/grub 2>/dev/null || true
+    command -v grub-mkconfig >/dev/null && sudo grub-mkconfig -o /boot/grub/grub.cfg 2>/dev/null || true
+  fi
+  note "GRUB patched"
+fi
+# 3) Limine (the one that bit us)
+for L in /boot/limine.conf /boot/limine/limine.conf /boot/EFI/limine/limine.conf /boot/limine.cfg; do
+  if [ -f "$L" ]; then
+    if addquiet "$L"; then :; else
+      sudo sed -i "s/\(cmdline:.*\)$/\1 $QUIET/I; s/\(KERNEL_CMDLINE\[[^]]*\]=.*\)$/\1 $QUIET/I" "$L" 2>/dev/null || true
+    fi
+    note "Limine patched ($L)"
+  fi
+done
+# 4) UKI / mkinitcpio cmdline sources
+if [ -f /etc/kernel/cmdline ]; then
+  addquiet /etc/kernel/cmdline || sudo sed -i "s/$/ $QUIET/" /etc/kernel/cmdline 2>/dev/null || true
+  command -v mkinitcpio >/dev/null && sudo mkinitcpio -P 2>/dev/null || true
+  note "/etc/kernel/cmdline patched (UKI rebuilt)"
+fi
+if [ -d /etc/cmdline.d ]; then
+  echo "$QUIET" | sudo tee /etc/cmdline.d/10-index-quiet.conf >/dev/null 2>&1 || true
+  command -v mkinitcpio >/dev/null && sudo mkinitcpio -P 2>/dev/null || true
+  note "/etc/cmdline.d patched"
+fi
+# 5) console quiet regardless of bootloader (kernel printk)
+echo "kernel.printk = 3 3 3 3" | sudo tee /etc/sysctl.d/20-index-quiet.conf >/dev/null 2>&1 || true
 
 # ---------- 8. VERIFY everything landed ----------
 echo; say "verifying install:"
