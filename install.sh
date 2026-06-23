@@ -125,17 +125,20 @@ fi
 # no text password at boot; the INDEX lock becomes the only auth gate.
 say "enabling tty1 autologin (boot straight into the INDEX lock)..."
 USERNAME="$(id -un)"
-if command -v systemctl >/dev/null && [ -d /etc/systemd ]; then
-  sudo mkdir -p /etc/systemd/system/getty@tty1.service.d 2>/dev/null && \
-  sudo tee /etc/systemd/system/getty@tty1.service.d/autologin.conf >/dev/null <<EOF2 && \
-[Service]
-ExecStart=
-ExecStart=-/sbin/agetty --autologin $USERNAME --noclear %I \$TERM
-EOF2
+AGETTY="$(command -v agetty 2>/dev/null || echo /usr/bin/agetty)"
+if command -v systemctl >/dev/null 2>&1; then
+  sudo mkdir -p /etc/systemd/system/getty@tty1.service.d
+  printf '[Service]\nExecStart=\nExecStart=-%s --autologin %s --noclear %%I $TERM\nType=idle\n' "$AGETTY" "$USERNAME" \
+    | sudo tee /etc/systemd/system/getty@tty1.service.d/autologin.conf >/dev/null
   sudo systemctl daemon-reload 2>/dev/null || true
-  note "tty1 autologin enabled for '$USERNAME' (no TTY password; INDEX lock guards login)"
+  sudo systemctl enable getty@tty1.service 2>/dev/null || true
+  if sudo test -f /etc/systemd/system/getty@tty1.service.d/autologin.conf; then
+    note "tty1 autologin set for '$USERNAME' -> boots straight to labwc + INDEX lock"
+  else
+    note "autologin file did NOT write — re-run with sudo available"
+  fi
 else
-  note "no systemd — set up tty1 autologin manually for boot-straight-to-lock"
+  note "no systemd — set up tty1 autologin manually"
 fi
 
 # ---------- 8. VERIFY everything landed ----------
@@ -153,6 +156,7 @@ chk "$CFG/quickshell/shell.qml"                  "quickshell shell"
 chk "$CFG/quickshell/Bar.qml"                    "bar"
 chk "$CFG/quickshell/Atmosphere.qml"             "atmosphere"
 chk "$CFG/quickshell/lock/lock.qml"              "INDEX lock"
+sudo test -f /etc/systemd/system/getty@tty1.service.d/autologin.conf 2>/dev/null && ok "tty1 autologin (no text login)" || bad "tty1 autologin NOT set"
 command -v labwc  >/dev/null && ok "labwc installed"  || bad "labwc NOT installed"
 ( command -v quickshell >/dev/null || command -v qs >/dev/null ) && ok "quickshell installed" || bad "quickshell NOT installed - run: yay -S quickshell-git"
 command -v swaybg >/dev/null && ok "swaybg installed" || bad "swaybg NOT installed"
