@@ -1,8 +1,9 @@
 #!/bin/sh
 # WILL OF THE CITY :: THE INDEX  —  labwc autostart
 LOCKER="$HOME/.config/labwc/index-lock"
+# LOCK FIRST so the desktop never flashes before it
+sh "$LOCKER" &
+# wallpaper + bar load behind the lock (ready when you unlock)
 swaybg -i "$HOME/.config/labwc/wall.png" -m fill &
 swayidle -w lock "sh $LOCKER" &
 quickshell -p "$HOME/.config/quickshell/shell.qml" &
-# lock on every boot (boot-safe launcher waits for the compositor + retries)
-sh "$LOCKER" &

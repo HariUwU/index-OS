@@ -75,11 +75,12 @@ cat > "$CFG/labwc/autostart" <<'AUTO'
 #!/bin/sh
 # WILL OF THE CITY :: THE INDEX  —  labwc autostart
 LOCKER="$HOME/.config/labwc/index-lock"
+# LOCK FIRST so the desktop never flashes before it
+sh "$LOCKER" &
+# wallpaper + bar load behind the lock (ready when you unlock)
 swaybg -i "$HOME/.config/labwc/wall.png" -m fill &
 swayidle -w lock "sh $LOCKER" &
 quickshell -p "$HOME/.config/quickshell/shell.qml" &
-# lock on every boot (boot-safe launcher waits for the compositor + retries)
-sh "$LOCKER" &
 AUTO
 chmod +x "$CFG/labwc/autostart"
 
@@ -106,9 +107,9 @@ cp -f "$DIR/wofi/config" "$CFG/wofi/" 2>/dev/null || true
 cp -f "$DIR/wofi/style.css" "$CFG/wofi/" 2>/dev/null || true
 cp -rf "$DIR/fastfetch/." "$CFG/fastfetch/" 2>/dev/null || true
 
-# ---------- 7. auto-start labwc on login (TTY1) ----------
-say "setting labwc to start on login..."
-BP="$HOME/.bash_profile"; SNIP_B='[ -z "$WAYLAND_DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ] && exec dbus-run-session labwc'
+# ---------- 7. auto-start labwc on login (TTY1), silently ----------
+say "setting labwc to start on login (silent)..."
+BP="$HOME/.bash_profile"; SNIP_B='[ -z "$WAYLAND_DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ] && { clear; exec dbus-run-session labwc >/dev/null 2>&1; }'
 touch "$BP"; grep -q "exec dbus-run-session labwc" "$BP" 2>/dev/null || printf '\n# WILL OF THE CITY :: THE INDEX\n%s\n' "$SNIP_B" >> "$BP"
 FC="$HOME/.config/fish/config.fish"; mkdir -p "$(dirname "$FC")"; touch "$FC"
 if ! grep -q "dbus-run-session labwc" "$FC" 2>/dev/null; then
@@ -116,7 +117,8 @@ if ! grep -q "dbus-run-session labwc" "$FC" 2>/dev/null; then
 
 # WILL OF THE CITY :: THE INDEX
 if status is-login; and test -z "$WAYLAND_DISPLAY"; and test (tty) = /dev/tty1
-    exec dbus-run-session labwc
+    clear
+    exec dbus-run-session labwc >/dev/null 2>&1
 end
 FISH
 fi
@@ -139,6 +141,32 @@ if command -v systemctl >/dev/null 2>&1; then
   fi
 else
   note "no systemd — set up tty1 autologin manually"
+fi
+
+# hush the getty login banner (no "<host> login:" flash)
+sudo touch /etc/issue 2>/dev/null && sudo cp /etc/issue /etc/issue.index-bak 2>/dev/null && echo -n "" | sudo tee /etc/issue >/dev/null 2>&1 || true
+
+# ---------- 7c. SILENT BOOT (quiet kernel messages) ----------
+# best-effort: hides kernel/systemd boot text. Backs up before touching anything.
+say "quieting boot messages (silent boot)..."
+QUIET="quiet loglevel=3 systemd.show_status=false rd.udev.log_level=3 vt.global_cursor_default=0"
+if [ -d /boot/loader/entries ]; then           # systemd-boot
+  for e in /boot/loader/entries/*.conf; do
+    [ -f "$e" ] || continue
+    grep -q "loglevel=3" "$e" 2>/dev/null && continue
+    sudo cp "$e" "$e.index-bak" 2>/dev/null || true
+    sudo sed -i "s/^\(options .*\)$/\1 $QUIET/" "$e" 2>/dev/null || true
+  done
+  note "systemd-boot: added quiet params (backups: *.index-bak)"
+elif [ -f /etc/default/grub ]; then            # GRUB
+  if ! grep -q "loglevel=3" /etc/default/grub; then
+    sudo cp /etc/default/grub /etc/default/grub.index-bak 2>/dev/null || true
+    sudo sed -i "s/\(GRUB_CMDLINE_LINUX_DEFAULT=\"[^\"]*\)\"/\1 $QUIET\"/" /etc/default/grub 2>/dev/null || true
+    if command -v grub-mkconfig >/dev/null; then sudo grub-mkconfig -o /boot/grub/grub.cfg 2>/dev/null || true; fi
+  fi
+  note "GRUB: added quiet params (backup: /etc/default/grub.index-bak)"
+else
+  note "unknown bootloader — skipped quiet params (boot text will still show)"
 fi
 
 # ---------- 8. VERIFY everything landed ----------
