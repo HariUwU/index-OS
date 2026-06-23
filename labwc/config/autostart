@@ -1,14 +1,8 @@
 #!/bin/sh
 # WILL OF THE CITY :: THE INDEX  —  labwc autostart
 LOCK='pgrep -f lock/lock.qml || quickshell -p $HOME/.config/quickshell/lock/lock.qml'
-
-# wallpaper (swaybg = wlroots-native; hyprpaper is Hyprland-only)
 swaybg -i "$HOME/.config/labwc/wall.png" -m fill &
-
-# THE INDEX as the DEFAULT lock: anything that calls 'loginctl lock-session'
-# (system menus, lid close, etc.) runs the INDEX lock. NO 'timeout' line here
-# on purpose -> the screen never auto-locks on idle; only on a real lock request.
 swayidle -w lock "$LOCK" &
-
-# the THE INDEX bar + atmosphere (quickshell is compositor-agnostic Wayland)
 quickshell -p "$HOME/.config/quickshell/shell.qml" &
+# lock on every boot: INDEX lock greets you before the desktop
+sleep 1; sh -c "$LOCK" &

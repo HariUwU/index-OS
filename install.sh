@@ -61,6 +61,8 @@ LOCK='pgrep -f lock/lock.qml || quickshell -p $HOME/.config/quickshell/lock/lock
 swaybg -i "$HOME/.config/labwc/wall.png" -m fill &
 swayidle -w lock "$LOCK" &
 quickshell -p "$HOME/.config/quickshell/shell.qml" &
+# lock on every boot: INDEX lock greets you before the desktop
+sleep 1; sh -c "$LOCK" &
 AUTO
 chmod +x "$CFG/labwc/autostart"
 
