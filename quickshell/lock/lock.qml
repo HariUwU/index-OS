@@ -663,14 +663,14 @@ ShellRoot {
                 var v = volSettings.volume
                 volTrack.volValue = v; bgAudioOut.volume = v
                 clickSound.volume = v; successSound.volume = v; failSound.volume = v; checkSound.volume = v
-                // once-per-boot intro gate: launcher writes /tmp/.index-intro = 1 first boot, 0 after
-                var play = false
+                // once-per-boot intro gate: launcher exports INDEX_INTRO=1 first boot, 0 after.
+                // (XHR local-file read is blocked by quickshell, so we use the env var instead.)
+                var play = true
                 try {
-                    var xhr = new XMLHttpRequest()
-                    xhr.open("GET", "file:///tmp/.index-intro", false)
-                    xhr.send(null)
-                    play = (xhr.responseText.trim() === "1")
-                } catch (e) { play = true }   // flag missing (e.g. manual run) -> play once
+                    var flag = Quickshell.env("INDEX_INTRO")
+                    if (flag !== undefined && flag !== null && String(flag) !== "")
+                        play = (String(flag) === "1")
+                } catch (e) { play = true }   // env API missing -> just play
                 if (play) startIntro()
                 else { surf.introActive = false; introLayer.opacity = 0.0; passwordInput.forceActiveFocus() }
             }

@@ -1,11 +1,9 @@
 #!/bin/sh
 # WILL OF THE CITY :: THE INDEX  —  lock launcher (boot-safe, idempotent)
 pgrep -f 'lock/lock.qml' >/dev/null 2>&1 && exit 0
-# once-per-boot intro flag (BOOTED marker lives in /tmp, wiped each reboot)
+# once-per-boot intro: export INDEX_INTRO=1 the first time after boot, 0 after
 BOOTED="/tmp/.index-booted-$(id -u)"
-FLAG="/tmp/.index-intro"
-if [ -e "$BOOTED" ]; then echo 0 > "$FLAG"; else echo 1 > "$FLAG"; : > "$BOOTED"; fi
-# wait for wayland, then run with retry
+if [ -e "$BOOTED" ]; then export INDEX_INTRO=0; else export INDEX_INTRO=1; : > "$BOOTED"; fi
 i=0
 while [ -z "$WAYLAND_DISPLAY" ] && [ "$i" -lt 30 ]; do sleep 0.2; i=$((i+1)); done
 QS="$(command -v quickshell 2>/dev/null || command -v qs 2>/dev/null)"
