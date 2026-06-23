@@ -57,6 +57,7 @@ ShellRoot {
             property color cyanDim: "#3A7CA5"
             property color warnColor: "#FF6B6B"
             property color successColor: "#5DE285"
+            property bool  introActive: true
 
             // ---- state ----
             property int failCount: 0
@@ -156,11 +157,139 @@ ShellRoot {
             }
             NumberAnimation { id: successFade; target: fadeOverlay; property: "opacity"; from: 0.0; to: 1.0; duration: 800; easing.type: Easing.InQuad }
 
+            // ======================= CINEMATIC INTRO =============
+            Item {
+                id: introLayer
+                anchors.fill: parent; z: 1000
+                visible: opacity > 0.001
+                opacity: 1.0
+                Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.InQuad } }
+
+                Rectangle { anchors.fill: parent; color: "#020a0f" }
+
+                // click anywhere to skip the intro
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        introSequence.stop(); emblemReveal.stop(); sweepAnim.stop()
+                        glitchTick.stop(); introTyper.stop()
+                        surf.introActive = false; introLayer.opacity = 0.0
+                        passwordInput.forceActiveFocus()
+                    }
+                }
+
+                // glitch static bars
+                Item {
+                    id: glitchField; anchors.fill: parent; opacity: 0.0
+                    Repeater {
+                        id: glitchRepeater; model: 44
+                        Rectangle {
+                            width: glitchField.width
+                            height: 2 + Math.random()*7
+                            y: Math.random()*glitchField.height
+                            color: Math.random() > 0.5 ? "#5DADE2" : "#0a2a3a"
+                            opacity: Math.random()*0.8
+                        }
+                    }
+                }
+                Timer {
+                    id: glitchTick; interval: 55; repeat: true; running: false
+                    onTriggered: {
+                        for (var i=0;i<glitchRepeater.count;i++){
+                            var it=glitchRepeater.itemAt(i)
+                            if(it){ it.y=Math.random()*introLayer.height
+                                    it.opacity=Math.random()*0.8
+                                    it.height=2+Math.random()*7
+                                    it.color=Math.random()>0.5?"#5DADE2":"#0a2a3a" }
+                        }
+                    }
+                }
+
+                // emblem glow + emblem
+                Rectangle {
+                    id: introGlow; anchors.centerIn: introEmblem
+                    width: 360; height: 360; radius: 180
+                    color: "#5DADE2"; opacity: 0.0
+                }
+                Image {
+                    id: introEmblem
+                    anchors.centerIn: parent
+                    source: Qt.resolvedUrl("assets/Logo.png")
+                    sourceSize.width: 300; sourceSize.height: 300
+                    fillMode: Image.PreserveAspectFit
+                    opacity: 0.0; scale: 0.75
+                }
+
+                // scanline sweep
+                Rectangle {
+                    id: introSweep
+                    width: introLayer.width; height: 3
+                    color: "#85C5E8"; opacity: 0.0; y: 0
+                }
+
+                // typed title
+                Text {
+                    id: introTitle
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: introEmblem.bottom; anchors.topMargin: 26
+                    font.family: pixelFont.name; font.pixelSize: 26
+                    color: "#5DADE2"; text: ""
+                }
+                property string introFull: ">_ THE INDEX :: AUTHORIZATION REQUIRED_"
+                property int introIdx: 0
+                Timer {
+                    id: introTyper; interval: 42; repeat: true; running: false
+                    onTriggered: {
+                        if (introLayer.introIdx < introLayer.introFull.length) {
+                            introTitle.text += introLayer.introFull.charAt(introLayer.introIdx)
+                            introLayer.introIdx++
+                            if (introLayer.introIdx % 3 === 0) surf.sfx("click.wav")
+                        } else { introTyper.stop(); introEndTimer.start() }
+                    }
+                }
+                Timer { id: introEndTimer; interval: 700; repeat: false
+                    onTriggered: { surf.introActive = false; introLayer.opacity = 0.0; introFocusTimer.start() } }
+                Timer { id: introFocusTimer; interval: 650; repeat: false
+                    onTriggered: passwordInput.forceActiveFocus() }
+            }
+
+            // emblem reveal (started by the sequence)
+            ParallelAnimation {
+                id: emblemReveal
+                NumberAnimation { target: introEmblem; property: "opacity"; from: 0; to: 1; duration: 500 }
+                NumberAnimation { target: introEmblem; property: "scale"; from: 0.75; to: 1.0; duration: 600; easing.type: Easing.OutBack }
+                SequentialAnimation {
+                    NumberAnimation { target: introGlow; property: "opacity"; from: 0; to: 0.35; duration: 300 }
+                    NumberAnimation { target: introGlow; property: "opacity"; to: 0.12; duration: 500 }
+                }
+            }
+            SequentialAnimation {
+                id: sweepAnim
+                NumberAnimation { target: introSweep; property: "opacity"; to: 0.9; duration: 80 }
+                NumberAnimation { target: introSweep; property: "y"; from: 0; to: surf.height; duration: 550; easing.type: Easing.InOutQuad }
+                NumberAnimation { target: introSweep; property: "opacity"; to: 0.0; duration: 120 }
+            }
+
+            // master intro timeline
+            SequentialAnimation {
+                id: introSequence
+                PauseAnimation { duration: 350 }
+                ScriptAction { script: { glitchField.opacity = 1.0; glitchTick.start(); surf.sfx("check.wav") } }
+                PauseAnimation { duration: 700 }
+                ScriptAction { script: { glitchTick.stop(); glitchField.opacity = 0.0; surf.sfx("click.wav"); emblemReveal.start() } }
+                PauseAnimation { duration: 500 }
+                ScriptAction { script: sweepAnim.start() }
+                PauseAnimation { duration: 650 }
+                ScriptAction { script: introTyper.start() }
+            }
+
             // ======================= MAIN UI =====================
             RowLayout {
                 anchors.centerIn: parent
                 width: Math.min(surf.width * 0.8, 1100)
                 spacing: 60
+                opacity: surf.introActive ? 0.0 : 1.0
+                Behavior on opacity { NumberAnimation { duration: 600; easing.type: Easing.InOutQuad } }
 
                 // left column: clock + logo
                 ColumnLayout {
@@ -582,7 +711,7 @@ ShellRoot {
                 var v = volSettings.volume
                 volTrack.volValue = v; bgAudioOut.volume = v
                 clickSound.volume = v; successSound.volume = v; failSound.volume = v; checkSound.volume = v
-                passwordInput.forceActiveFocus()
+                introSequence.start()   // cinematic cold-open; focuses the field when done
             }
         }
     }
