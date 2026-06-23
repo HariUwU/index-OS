@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <labwc_config>
   <core><gap>6</gap><decoration>server</decoration></core>
+  <windowRules>
+    <!-- force the labwc (cyan bracket) titlebar even on apps that prefer their own -->
+    <windowRule identifier="*" serverDecoration="yes"/>
+  </windowRules>
   <theme>
     <name>the-index</name>
     <titlebar><layout>icon:iconify,max,close</layout></titlebar>
