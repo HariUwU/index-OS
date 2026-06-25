@@ -40,6 +40,9 @@ say "installing Perfect DOS VGA 437..."
 mkdir -p "$HOME/.local/share/fonts"
 cp -f "$DIR/assets/PerfectDOSVGA437.ttf" "$HOME/.local/share/fonts/" 2>/dev/null || true
 fc-cache -f >/dev/null 2>&1 || true
+mkdir -p "$CFG/fontconfig"
+cp -f "$DIR/labwc/config/fontconfig/fonts.conf" "$CFG/fontconfig/fonts.conf" 2>/dev/null || true
+fc-cache -f >/dev/null 2>&1 || true
 
 # ---------- 3. titlebar theme (the bracket buttons) ----------
 say "installing THE INDEX titlebar theme..."
