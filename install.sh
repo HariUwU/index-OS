@@ -17,22 +17,74 @@ CFG="$HOME/.config"; THEMES="$HOME/.local/share/themes"
 say "WILL OF THE CITY :: THE INDEX  —  labwc (plug & play)"
 [ -d "$DIR/labwc" ] || { bad "run this from inside the index-OS repo (labwc/ not found)"; exit 1; }
 
-# ---------- 1. packages ----------
-if command -v pacman >/dev/null; then
-  say "installing packages..."
-  sudo pacman -S --needed --noconfirm \
-      labwc swaybg swayidle foot wofi wtype thunar \
-      qt6-multimedia qt6-svg qt6-declarative fastfetch wireplumber ffmpeg gst-libav gst-plugins-good \
-      brightnessctl ttf-dejavu gnome-themes-extra qt6ct qt5ct base-devel cmake meson git 2>/dev/null \
-      || note "(some packages may have failed - continuing)"
-  if ! command -v quickshell >/dev/null && ! command -v qs >/dev/null; then
+# ---------- 1. packages (multi-distro: pacman / apt / dnf / zypper) ----------
+say "detecting distro + installing packages..."
+PKG=""
+command -v pacman >/dev/null && PKG=pacman
+command -v apt-get >/dev/null && PKG=apt
+command -v dnf >/dev/null && PKG=dnf
+command -v zypper >/dev/null && PKG=zypper
+
+case "$PKG" in
+  pacman)
+    sudo pacman -S --needed --noconfirm \
+        labwc swaybg swayidle foot wofi wtype thunar \
+        qt6-multimedia qt6-svg qt6-declarative fastfetch wireplumber ffmpeg gst-libav gst-plugins-good \
+        brightnessctl ttf-dejavu gnome-themes-extra qt6ct qt5ct base-devel cmake meson git 2>/dev/null \
+        || note "(some packages failed - continuing)"
+    ;;
+  apt)
+    sudo apt-get update -y 2>/dev/null || true
+    sudo apt-get install -y \
+        labwc swaybg swayidle foot wofi wtype thunar \
+        qt6-multimedia-dev libqt6svg6 qml6-module-qtquick fastfetch wireplumber ffmpeg gstreamer1.0-libav \
+        brightnessctl fonts-dejavu gnome-themes-extra qt6ct cmake meson ninja-build build-essential git \
+        2>/dev/null || note "(some apt packages failed - continuing)"
+    ;;
+  dnf)
+    sudo dnf install -y \
+        labwc swaybg swayidle foot wofi wtype thunar \
+        qt6-qtmultimedia qt6-qtsvg qt6-qtdeclarative fastfetch wireplumber ffmpeg \
+        brightnessctl dejavu-sans-fonts gnome-themes-extra qt6ct cmake meson ninja-build gcc-c++ git \
+        2>/dev/null || note "(some dnf packages failed - continuing)"
+    ;;
+  zypper)
+    sudo zypper --non-interactive install \
+        labwc swaybg swayidle foot wofi wtype thunar \
+        qt6-multimedia-imports qt6-svg qt6-declarative-imports fastfetch wireplumber ffmpeg \
+        brightnessctl dejavu-fonts gnome-themes-extra qt6ct cmake meson ninja gcc-c++ git \
+        2>/dev/null || note "(some zypper packages failed - continuing)"
+    ;;
+  *)
+    note "unknown distro/package manager — install manually: labwc swaybg swayidle foot wofi wtype quickshell qt6-multimedia qt6-svg fastfetch ffmpeg" ;;
+esac
+
+# quickshell: packaged on Arch (AUR); build from source elsewhere
+if ! command -v quickshell >/dev/null && ! command -v qs >/dev/null; then
+  if [ "$PKG" = "pacman" ]; then
     say "installing quickshell (AUR)..."
-    if command -v yay >/dev/null; then yay -S --needed --noconfirm quickshell-git || note "quickshell-git failed"
+    if   command -v yay  >/dev/null; then yay  -S --needed --noconfirm quickshell-git || note "quickshell-git failed"
     elif command -v paru >/dev/null; then paru -S --needed --noconfirm quickshell-git || note "quickshell-git failed"
     else note "no AUR helper - install yay then: yay -S quickshell-git"; fi
+  else
+    say "quickshell not packaged here — building from source (slow)..."
+    # build deps per distro
+    case "$PKG" in
+      apt)    sudo apt-get install -y qt6-base-dev qt6-declarative-dev qt6-wayland-dev libwayland-dev wayland-protocols libpam0g-dev libjemalloc-dev libpipewire-0.3-dev cli11-dev 2>/dev/null || true ;;
+      dnf)    sudo dnf install -y qt6-qtbase-devel qt6-qtdeclarative-devel qt6-qtwayland-devel wayland-devel wayland-protocols-devel pam-devel jemalloc-devel pipewire-devel cli11-devel 2>/dev/null || true ;;
+      zypper) sudo zypper --non-interactive install qt6-base-devel qt6-declarative-devel qt6-wayland-devel wayland-devel wayland-protocols-devel pam-devel jemalloc-devel pipewire-devel 2>/dev/null || true ;;
+    esac
+    TMPQ="$(mktemp -d)"
+    if git clone --depth 1 https://github.com/quickshell-mirror/quickshell "$TMPQ" 2>/dev/null \
+       && cmake -S "$TMPQ" -B "$TMPQ/build" -GNinja -DCMAKE_BUILD_TYPE=Release 2>/dev/null \
+       && cmake --build "$TMPQ/build" 2>/dev/null \
+       && sudo cmake --install "$TMPQ/build" 2>/dev/null; then
+      note "quickshell built + installed from source"
+    else
+      note "quickshell source build FAILED — see https://quickshell.outfoxxed.me/docs/guide/install/ for your distro"
+    fi
+    rm -rf "$TMPQ"
   fi
-else
-  note "not Arch - install manually: labwc swaybg swayidle foot wofi wtype quickshell qt6-multimedia qt6-svg fastfetch"
 fi
 
 # ---------- 2. font ----------
