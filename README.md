@@ -140,10 +140,4 @@ Wrong fixer password in the WILL OF THE CITY modal powers off (Project Moon
 
 ---
 
-## Aesthetic
-
-Palette: cyan `#5DADE2` / bright `#85C5E8` / dim `#3A7CA5` / red `#FF6B6B` /
-success `#5DE285` / bg `#05080d`. Font: Perfect DOS VGA 437.
-From *The House of Spiders: The Index*.
-
-`>_ THE INDEX_`
+`>_CLEAR._`
