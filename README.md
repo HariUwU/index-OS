@@ -1,10 +1,7 @@
 # WILL OF THE CITY :: THE INDEX
 
-A Project-Moon-themed **labwc** desktop — cyan CRT terminal aesthetic, pixel
-font, glowing emblem, real `[_] [□] [X]` bracket titlebars, and a cinematic
-boot lock. One installer, plug & play.
+A Project-Moon-themed **labwc** desktop base from THE INDEX
 
-![the index](preview/will-of-the-city-full.html)
 
 ---
 
