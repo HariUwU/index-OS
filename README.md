@@ -1,154 +1,193 @@
+<div align="center">
+
 # WILL OF THE CITY :: THE INDEX
 
-A Project-Moon-themed **labwc** desktop — cyan CRT terminal aesthetic, pixel
-font, glowing emblem, real `[_] [□] [X]` bracket titlebars, and a cinematic
-boot lock. One installer, plug & play.
+**A cyan CRT desktop for Linux.**
+Pixel font, glowing emblem, bracket titlebars, and a cinematic lock screen.
 
-![the index](preview/will-of-the-city-full.html)
+`>_ THE INDEX_`
+
+</div>
+
+---
+
+## What is this?
+
+A complete desktop you can install in one command. It replaces your whole
+desktop environment with a terminal-inspired cyan interface — every window gets
+`[_] [□] [X]` bracket buttons, apps are recolored to match, and your machine
+boots straight into a lock screen with your own intro video.
+
+Built on **labwc** (the window manager) and **quickshell** (the bar, menu, and
+lock). Themed after *The House of Spiders: The Index*.
+
+**Best on a fresh install with no desktop environment.** It's designed to be
+your desktop, not to sit next to one.
 
 ---
 
 ## Install
 
-```bash
-# 1. get git, clone
-sudo pacman -S --needed git          # (apt/dnf/zypper on other distros)
-git clone https://github.com/HariUwU/index-OS.git ~/index-OS
-cd ~/index-OS
+**You need:** an Arch-based system (CachyOS, EndeavourOS, Arch) installed with
+**no desktop environment**, and an internet connection.
 
-# 2. (Arch only) an AUR helper for quickshell
-sudo pacman -S --needed base-devel
+```bash
+# 1. tools
+sudo pacman -S --needed git base-devel
+
+# 2. yay (needed for quickshell)
 git clone https://aur.archlinux.org/yay.git ~/yay && (cd ~/yay && makepkg -si)
 
-# 3. run it
+# 3. this
+git clone https://github.com/HariUwU/index-OS.git ~/index-OS
+cd ~/index-OS
 ./install.sh
+
+# 4. done
+reboot
 ```
 
-`install.sh` installs everything, lays down the theme + config, sets the
-wallpaper, wires the lock, themes apps, makes labwc **auto-start on boot
-(silent, autologin)**, and ends with a per-file checklist. Safe to re-run.
+The installer prints a checklist at the end — every line should be a green ✓.
+If something shows red, that one piece is missing and the line tells you what.
 
-Then reboot, or:
+After reboot your machine goes straight to the INDEX lock screen. Type your
+password and you're in. **Safe to re-run `./install.sh` any time.**
 
-```bash
-dbus-run-session labwc
-```
+<details>
+<summary><b>Other distros (Debian, Ubuntu, Fedora, openSUSE)</b></summary>
 
----
-
-## Distro support
+The installer detects `apt` / `dnf` / `zypper` and installs the right packages.
+It works, but it's **experimental** — quickshell isn't packaged outside Arch, so
+the installer compiles it from source. That takes several minutes and is the
+most likely thing to fail. If it does, the error names the missing piece; see
+the [quickshell install docs](https://quickshell.outfoxxed.me/docs/guide/install/).
 
 | Distro | Status |
 |--------|--------|
-| **Arch / CachyOS / EndeavourOS** | ✅ tested — full support (pacman + AUR) |
-| **Debian / Ubuntu** (apt) | ⚠️ experimental — quickshell built from source |
-| **Fedora** (dnf) | ⚠️ experimental — quickshell built from source |
-| **openSUSE** (zypper) | ⚠️ experimental — quickshell built from source |
+| Arch / CachyOS / EndeavourOS | ✅ tested |
+| Debian / Ubuntu | ⚠️ experimental |
+| Fedora | ⚠️ experimental |
+| openSUSE | ⚠️ experimental |
 
-> quickshell is only packaged on Arch (AUR). On other distros the installer
-> compiles it from source — slow, and the most likely thing to fail. If a
-> non-Arch install errors, the line it printed tells you which package or
-> build step; see https://quickshell.outfoxxed.me/docs/guide/install/
+</details>
 
 ---
 
-## Keys
+## Using it
 
-| Key | Action |
-|-----|--------|
-| `Super + Return` | terminal (foot) |
-| `Super + D` | launcher (wofi) |
-| `Super + Q` | close window |
-| `Super + F` | toggle maximize |
-| `Super + L` | **INDEX lock** (default + only locker) |
-| `Super + 1…5` | switch desktop |
-| `Alt + Tab` | next window |
-| right-click | root menu |
+| Key | Does |
+|-----|------|
+| `Super` + `Return` | Open a terminal |
+| `Super` + `D` | App launcher |
+| `Super` + `Q` | Close window |
+| `Super` + `F` | Maximize |
+| `Super` + `L` | Lock the screen |
+| `Super` + `1`–`5` | Switch desktop |
+| `Alt` + `Tab` | Next window |
+| `Print` | Screenshot → `~/Pictures` |
+| `Shift` + `Print` | Select area → clipboard |
+| Right-click desktop | Menu |
 
----
+Brightness, volume, and media keys work as normal.
 
-## What you get
-
-- **Bracket titlebars** — real `[_] [□] [X]` cyan pixel-glyph buttons (labwc theme).
-  Forced server-side so apps use one bar; browsers (Firefox/Chromium family)
-  patched to drop their own. *libadwaita GNOME apps can't be forced — Linux limit.*
-- **The bar** — emblem/start menu (searchable), workspace pills, clock, system
-  tray, volume control (scroll/click-mute).
-- **The atmosphere** — drifting cyan motes, subtitle ticker, SEASON/district HUD.
-- **The lock** — cinematic boot intro (your own `assets/intro.mp4`, once per boot,
-  skippable), scramble + audio + PAM auth, WILL OF THE CITY fixer modal. Default
-  + only locker; **no idle auto-lock**.
-- **App theming** — INDEX-cyan GTK theme + qt6ct Qt palette + pixel font + foot
-  CRT theme, so apps read like the desktop.
-- **Silent boot** — autologin + quiet kernel params (all bootloaders) →
-  straight into the lock, no text, no desktop flash.
+**The bar** (top of screen) has the start menu on the left — click the emblem,
+then type to search your apps. On the right: network, bluetooth, battery,
+volume (scroll to change, click to mute), tray, and clock.
 
 ---
 
-## Layout
+## Make it yours
 
-| Path | What |
-|------|------|
-| `install.sh` | the one installer (multi-distro, plug & play) |
-| `labwc/theme/the-index/` | titlebar theme — the `[_] [□] [X]` bracket buttons |
-| `labwc/theme/the-index-gtk/` | INDEX-cyan GTK theme |
-| `labwc/config/` | `rc.xml`, `menu.xml`, `autostart`, `environment`, `foot.ini`, qt6ct/qt5ct, gtk, fontconfig |
-| `labwc/config/index-lock` | boot-safe lock launcher |
-| `labwc/app-fixes/` | browser one-bar fixes (Firefox/Chromium families) |
-| `quickshell/shell.qml` | loads bar + atmosphere |
-| `quickshell/Bar.qml` | the top bar |
-| `quickshell/Atmosphere.qml` | particles + subtitle + HUD |
-| `quickshell/lock/lock.qml` | the INDEX lock + boot intro |
-| `assets/` | font, Logo, profile, icons, sounds (single source of truth) |
-| `wallpaper/` | the glowing-emblem wallpaper |
-| `preview/` | target look (browser mockup) |
+Everything lives in `assets/`. Drop a file in, re-run `./install.sh`.
 
----
+| Want to change | Do this |
+|----------------|---------|
+| Lock screen music | Replace `assets/sounds/bg.mp3` |
+| Boot intro video | Add `assets/intro.mp4` |
+| Your profile picture | Replace `assets/DefaultProfile.jpg` |
+| Wallpaper | Replace `wallpaper/the-index.png` |
+| Add a font | Drop any `.ttf` in `assets/` |
 
-## Customizing
+**The boot intro** plays once per boot, before the lock screen. Double-click to
+show a skip button. No video? It goes straight to the lock. On a VM or software
+GPU the installer automatically downscales it so it doesn't stutter.
 
-**Lock background song** → replace `assets/sounds/bg.mp3`, re-run `./install.sh`.
+**Thai text** works out of the box if you add `PerfectDOSVGA437-Thai.ttf` to
+`assets/` — Thai characters use the pixel font automatically, and anything
+neither font covers falls back to DejaVu Sans.
 
-**Boot intro video** → drop `assets/intro.mp4` (your own file; gitignored, never
-shipped). Plays once per boot, skippable. On a software/virtio GPU the installer
-auto-downscales it to 720p30 so it doesn't freeze.
-
-**Fonts** → any `.ttf` you drop in `assets/` gets installed. Ship
-`PerfectDOSVGA437-Thai.ttf` alongside the base font and Thai text automatically
-uses it (fontconfig lang match); anything neither font covers falls back to
-DejaVu Sans.
-
-**Lock assets** all live in `assets/` (single source) — the installer copies them
-into the lock. Don't edit `quickshell/lock/assets/` directly; it's generated.
+> Your `intro.mp4` and anything in `assets/boss/` stay on your machine — they're
+> ignored by git and never uploaded.
 
 ---
 
-## The lock
+## The lock screen
 
-`Super + L` runs the INDEX lock directly; `swayidle` routes any system lock
-request to it too. **No idle auto-lock** — the screen only locks when asked.
-Wrong fixer password in the WILL OF THE CITY modal powers off (Project Moon
-"Fixer" behavior).
+The INDEX lock is the **only** thing guarding your session, and it never locks
+on its own — only when you press `Super` + `L` or something asks it to.
 
-> The lock is the only auth gate (autologin has no TTY password). On first setup,
-> verify it unlocks before relying on it — keep a TTY (Ctrl+Alt+F2) handy.
+It has a few things in it:
 
----
+- **Scramble + PAM auth** — type your real password
+- **WILL OF THE CITY modal** — after repeated failures. Get the fixer password
+  wrong here and the machine powers off. That's intentional.
+- **CLASH** — click `>_ CLASH TO ENTER _<` for an optional turn-based fight.
+  Beat the boss and you're in. Add your own sprites at `assets/boss/boss.png`
+  and `assets/boss/player.png`, or it uses the emblem.
 
-## Notes / limits
-
-- Needs a real GPU path (bare metal or **QEMU/virtio-gpu**), **not** VirtualBox.
-- bar / atmosphere / lock are quickshell QML — if one doesn't render, run it in
-  the foreground to see the error: `quickshell -p ~/.config/quickshell/shell.qml`
-- Pixel font on small UI text can blur; missing glyphs (CJK/symbols) fall back to
-  DejaVu Sans.
+> ⚠️ Because login is automatic, the lock is your only password prompt. The
+> first time you set this up, check that it unlocks before you rely on it —
+> keep `Ctrl` + `Alt` + `F2` handy to reach a terminal if you need to.
 
 ---
 
-## Aesthetic
+## If something breaks
 
-Palette: cyan `#5DADE2` / bright `#85C5E8` / dim `#3A7CA5` / red `#FF6B6B` /
-success `#5DE285` / bg `#05080d`. Font: Perfect DOS VGA 437.
-From *The House of Spiders: The Index*.
+**The bar or lock doesn't appear** — run it in a terminal to see the error:
 
-`>_ THE INDEX_`
+```bash
+quickshell -p ~/.config/quickshell/shell.qml
+```
+
+**Nothing at all after reboot** — press `Ctrl` + `Alt` + `F2`, log in, and run
+`./install.sh` again. The checklist will show what's missing.
+
+**Notifications not showing** — test with `notify-send "THE INDEX" "hello"`.
+
+**Everything is laggy / the video freezes** — you're probably in a VM without
+GPU acceleration. This needs a real GPU: bare metal, or QEMU with virtio-gpu.
+**VirtualBox will not work** — it can't give a Wayland compositor what it needs.
+
+---
+
+## Good to know
+
+- Some newer GNOME apps (libadwaita) draw their own titlebar and **can't** be
+  made to use the cyan one. That's a limitation of those apps, not this setup.
+- The pixel font is sharp in the terminal but can look soft at small sizes in
+  regular apps.
+- Browsers are patched to use the system titlebar. Quit and reopen them once
+  after installing.
+
+---
+
+## What's inside
+
+| Path | What it is |
+|------|-----------|
+| `install.sh` | The installer — does everything |
+| `labwc/` | Window manager config + the bracket titlebar theme |
+| `quickshell/` | The bar, atmosphere, notifications, and lock screen |
+| `assets/` | Fonts, sounds, images — swap these to customize |
+| `wallpaper/` | The emblem wallpaper |
+
+---
+
+<div align="center">
+
+Cyan `#5DADE2` · Bright `#85C5E8` · Dim `#3A7CA5` · Red `#FF6B6B` · Background `#05080d`
+Font: Perfect DOS VGA 437
+
+*"By the geometry of inevitability, the prey gathers here."*
+
+</div>
