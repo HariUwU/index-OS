@@ -28,7 +28,7 @@ command -v zypper >/dev/null && PKG=zypper
 case "$PKG" in
   pacman)
     sudo pacman -S --needed --noconfirm \
-        labwc swaybg swayidle foot wofi wtype thunar \
+        labwc swaybg swayidle foot wofi wtype thunar grim slurp wl-clipboard playerctl blueman networkmanager \
         qt6-multimedia qt6-svg qt6-declarative fastfetch wireplumber ffmpeg gst-libav gst-plugins-good \
         brightnessctl ttf-dejavu gnome-themes-extra qt6ct qt5ct base-devel cmake meson git 2>/dev/null \
         || note "(some packages failed - continuing)"
@@ -36,21 +36,21 @@ case "$PKG" in
   apt)
     sudo apt-get update -y 2>/dev/null || true
     sudo apt-get install -y \
-        labwc swaybg swayidle foot wofi wtype thunar \
+        labwc swaybg swayidle foot wofi wtype thunar grim slurp wl-clipboard playerctl blueman networkmanager \
         qt6-multimedia-dev libqt6svg6 qml6-module-qtquick fastfetch wireplumber ffmpeg gstreamer1.0-libav \
         brightnessctl fonts-dejavu gnome-themes-extra qt6ct cmake meson ninja-build build-essential git \
         2>/dev/null || note "(some apt packages failed - continuing)"
     ;;
   dnf)
     sudo dnf install -y \
-        labwc swaybg swayidle foot wofi wtype thunar \
+        labwc swaybg swayidle foot wofi wtype thunar grim slurp wl-clipboard playerctl blueman networkmanager \
         qt6-qtmultimedia qt6-qtsvg qt6-qtdeclarative fastfetch wireplumber ffmpeg \
         brightnessctl dejavu-sans-fonts gnome-themes-extra qt6ct cmake meson ninja-build gcc-c++ git \
         2>/dev/null || note "(some dnf packages failed - continuing)"
     ;;
   zypper)
     sudo zypper --non-interactive install \
-        labwc swaybg swayidle foot wofi wtype thunar \
+        labwc swaybg swayidle foot wofi wtype thunar grim slurp wl-clipboard playerctl blueman networkmanager \
         qt6-multimedia-imports qt6-svg qt6-declarative-imports fastfetch wireplumber ffmpeg \
         brightnessctl dejavu-fonts gnome-themes-extra qt6ct cmake meson ninja gcc-c++ git \
         2>/dev/null || note "(some zypper packages failed - continuing)"
@@ -347,6 +347,8 @@ fi
 # 5) console quiet regardless of bootloader (kernel printk)
 echo "kernel.printk = 3 3 3 3" | sudo tee /etc/sysctl.d/20-index-quiet.conf >/dev/null 2>&1 || true
 
+mkdir -p "$HOME/Pictures" 2>/dev/null || true
+
 # ---------- 8. VERIFY everything landed ----------
 echo; say "verifying install:"
 chk(){ [ -s "$1" ] && ok "$2" || bad "$2  (MISSING: $1)"; }
@@ -361,6 +363,7 @@ chk "$THEMES/the-index/labwc/max-active.png"     "bracket button [#]"
 chk "$CFG/quickshell/shell.qml"                  "quickshell shell"
 chk "$CFG/quickshell/Bar.qml"                    "bar"
 chk "$CFG/quickshell/Atmosphere.qml"             "atmosphere"
+chk "$CFG/quickshell/Notifications.qml"          "notifications"
 chk "$CFG/quickshell/lock/lock.qml"              "INDEX lock"
 [ -f "$CFG/quickshell/lock/assets/intro.mp4" ] && ok "boot video (intro.mp4)" || note "no boot video (optional)"
 sudo test -f /etc/systemd/system/getty@tty1.service.d/autologin.conf 2>/dev/null && ok "tty1 autologin (no text login)" || bad "tty1 autologin NOT set"

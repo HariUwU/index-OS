@@ -11,6 +11,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Io
 import Quickshell.Services.SystemTray
 
 PanelWindow {
@@ -102,6 +103,70 @@ PanelWindow {
 
             RowLayout {
                 spacing: 10
+                // ---- network (click = open editor) ----
+                Text {
+                    id: netText
+                    property string ssid: ""
+                    text: ssid === "" ? "NET --" : "NET " + ssid
+                    font.family: bar.pixel; font.pixelSize: 13
+                    color: ssid === "" ? bar.warn : bar.cyanD
+                    elide: Text.ElideRight
+                    Layout.maximumWidth: 150
+                    MouseArea {
+                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                        onClicked: Quickshell.execDetached(["sh","-c","nm-connection-editor || iwgtk || true"])
+                    }
+                }
+                Process {
+                    id: netProc
+                    command: ["sh","-c","nmcli -t -f NAME connection show --active 2>/dev/null | head -1"]
+                    stdout: StdioCollector { onStreamFinished: netText.ssid = text.trim() }
+                }
+
+                // ---- bluetooth (click = manager) ----
+                Text {
+                    id: btText
+                    property bool on: false
+                    text: on ? "BT ON" : "BT --"
+                    font.family: bar.pixel; font.pixelSize: 13
+                    color: on ? bar.cyan : bar.cyanD
+                    MouseArea {
+                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                        onClicked: Quickshell.execDetached(["sh","-c","blueman-manager || blueberry || true"])
+                    }
+                }
+                Process {
+                    id: btProc
+                    command: ["sh","-c","bluetoothctl show 2>/dev/null | grep -q 'Powered: yes' && echo 1 || echo 0"]
+                    stdout: StdioCollector { onStreamFinished: btText.on = (text.trim() === "1") }
+                }
+
+                // ---- battery (hidden on desktops) ----
+                Text {
+                    id: batText
+                    property int pct: -1
+                    property bool charging: false
+                    visible: pct >= 0
+                    text: (charging ? "BAT+ " : "BAT ") + pct + "%"
+                    font.family: bar.pixel; font.pixelSize: 13
+                    color: pct <= 15 && !charging ? bar.warn : bar.cyanD
+                }
+                Process {
+                    id: batProc
+                    command: ["sh","-c","c=/sys/class/power_supply/BAT0; [ -d $c ] || c=/sys/class/power_supply/BAT1; if [ -d $c ]; then printf '%s %s' \"$(cat $c/capacity)\" \"$(cat $c/status)\"; else echo '-1 none'; fi"]
+                    stdout: StdioCollector { onStreamFinished: {
+                        var p = text.trim().split(" ")
+                        batText.pct = parseInt(p[0])
+                        batText.charging = (p[1] === "Charging" || p[1] === "Full")
+                    } }
+                }
+
+                // poll them
+                Timer {
+                    interval: 10000; running: true; repeat: true; triggeredOnStart: true
+                    onTriggered: { netProc.running = true; btProc.running = true; batProc.running = true }
+                }
+
                 // volume control — scroll to change, click to mute (wireplumber)
                 Text {
                     id: volText
