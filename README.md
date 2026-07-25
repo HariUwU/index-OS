@@ -113,6 +113,11 @@ dbus-run-session labwc
 shipped). Plays once per boot, skippable. On a software/virtio GPU the installer
 auto-downscales it to 720p30 so it doesn't freeze.
 
+**Fonts** → any `.ttf` you drop in `assets/` gets installed. Ship
+`PerfectDOSVGA437-Thai.ttf` alongside the base font and Thai text automatically
+uses it (fontconfig lang match); anything neither font covers falls back to
+DejaVu Sans.
+
 **Lock assets** all live in `assets/` (single source) — the installer copies them
 into the lock. Don't edit `quickshell/lock/assets/` directly; it's generated.
 
