@@ -158,28 +158,6 @@ ShellRoot {
             }
             NumberAnimation { id: successFade; target: fadeOverlay; property: "opacity"; from: 0.0; to: 1.0; duration: 800; easing.type: Easing.InQuad }
 
-            // ===== CLASH minigame (optional, beat boss to enter) =====
-            property bool gameMode: false
-            Loader {
-                id: clashLoader
-                anchors.fill: parent; z: 900
-                active: surf.gameMode
-                source: Qt.resolvedUrl("ClashGame.qml")
-                onLoaded: {
-                    item.gameWon.connect(function(){ sessionLock.locked = false; Qt.quit() })
-                    item.gameQuit.connect(function(){ surf.gameMode = false; passwordInput.forceActiveFocus() })
-                }
-            }
-            Text {
-                visible: !surf.gameMode && !surf.introActive
-                anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottomMargin: 28
-                text: ">_ CLASH TO ENTER _<"
-                font.family: pixelFont.name; font.pixelSize: 14; color: surf.cyan
-                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                    onClicked: surf.gameMode = true }
-            }
-
             // ======================= CINEMATIC INTRO (VIDEO) =====
             Item {
                 id: introLayer

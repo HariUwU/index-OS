@@ -185,8 +185,6 @@ else
   note "no intro.mp4 found — boot goes straight to the lock (drop one at ~/index-OS/assets/intro.mp4 and re-run)"
 fi
 rm -f "$SAVED_VID" 2>/dev/null || true
-# OPTIONAL local clash sprites (you supply; gitignored, never shipped)
-if [ -d "$DIR/assets/boss" ]; then mkdir -p "$CFG/quickshell/lock/assets/boss"; cp -f "$DIR/assets/boss/"* "$CFG/quickshell/lock/assets/boss/" 2>/dev/null || true; fi
 
 # ADAPTIVE: if the GPU is software/virtio (no real accel), downscale the video to 720p30
 # so it doesn't freeze. On real hardware the full-quality file is kept untouched.
