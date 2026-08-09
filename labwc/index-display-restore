@@ -1,0 +1,24 @@
+#!/bin/sh
+# WILL OF THE CITY :: THE INDEX — reapply the saved output layout at login
+J="$HOME/.config/labwc/display.json"
+[ -f "$J" ] || exit 0
+command -v wlr-randr >/dev/null || exit 0
+command -v python3 >/dev/null || exit 0
+sleep 1
+python3 - "$J" <<'PY' | while read -r line; do [ -n "$line" ] && wlr-randr $line 2>/dev/null; done
+import json,sys
+try: d=json.load(open(sys.argv[1]))
+except Exception: sys.exit(0)
+for o in d:
+    if not o.get("enabled"): 
+        print("--output %s --off" % o["name"]); continue
+    cur=None
+    for m in o.get("modes",[]):
+        if m.get("current"): cur=m; break
+    args=["--output", o["name"], "--on"]
+    if cur: args += ["--mode", "%dx%d@%.3fHz" % (cur["width"], cur["height"], cur.get("refresh",60))]
+    pos=o.get("position")
+    if pos: args += ["--pos", "%d,%d" % (pos["x"], pos["y"])]
+    if o.get("scale"): args += ["--scale", str(o["scale"])]
+    print(" ".join(args))
+PY

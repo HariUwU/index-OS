@@ -1,0 +1,10 @@
+#!/bin/sh
+# WILL OF THE CITY :: THE INDEX — snapshot current outputs so they persist
+mkdir -p "$HOME/.config/labwc"
+wlr-randr 2>/dev/null | awk '
+  /^[^ ]/ { name=$1 }
+  /current/ { split($1,m,"x"); split(m[2],r,"@"); printf "%s %s %s\n", name, m[1]"x"r[1], $0 }
+' > "$HOME/.config/labwc/display.state"
+# store the raw, most portable form: name + mode + position + scale
+wlr-randr --json 2>/dev/null > "$HOME/.config/labwc/display.json" || true
+echo "saved"

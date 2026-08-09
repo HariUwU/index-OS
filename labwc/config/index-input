@@ -1,0 +1,13 @@
+#!/bin/sh
+# WILL OF THE CITY :: THE INDEX — apply saved input settings into rc.xml
+CONF="$HOME/.config/labwc/index.conf"
+RC="$HOME/.config/labwc/rc.xml"
+[ -f "$CONF" ] || exit 0
+[ -f "$RC" ] || exit 0
+# read only well-formed KEY=VALUE lines (guards against a corrupted file)
+eval "$(grep -E '^[A-Z_]+=[^ ]*$' "$CONF" 2>/dev/null)" 2>/dev/null
+[ -n "$POINTER_SPEED" ] && sed -i "s|<pointerSpeed>[^<]*</pointerSpeed>|<pointerSpeed>$POINTER_SPEED</pointerSpeed>|g" "$RC"
+[ -n "$NATURAL_SCROLL" ] && sed -i "s|<naturalScroll>[^<]*</naturalScroll>|<naturalScroll>$NATURAL_SCROLL</naturalScroll>|g" "$RC"
+[ -n "$TAP_CLICK" ] && sed -i "s|<tap>[^<]*</tap>|<tap>$TAP_CLICK</tap>|g" "$RC"
+[ -n "$CURSOR_SIZE" ] && sed -i "s|^XCURSOR_SIZE=.*|XCURSOR_SIZE=$CURSOR_SIZE|" "$HOME/.config/labwc/environment"
+exit 0

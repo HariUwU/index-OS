@@ -19,7 +19,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Background
     WlrLayershell.namespace: "index-atmosphere"
 
-    readonly property string pixel: "Perfect DOS VGA 437"
+    readonly property string pixel: "Perfect DOS VGA 437 Universal"
 
     // ---- corner HUD (matches the preview corners) ----
     Text {
@@ -29,7 +29,7 @@ PanelWindow {
     }
     Text {
         anchors.right: parent.right; anchors.top: parent.top; anchors.margins: 14
-        text: "SEASON :: THE INDEX"
+        text: "… I hear the waves."
         font.family: atmo.pixel; font.pixelSize: 13; color: "#FF6B6B"
     }
     Text {
@@ -107,7 +107,7 @@ PanelWindow {
         Text {
             id: subMain
             anchors.horizontalCenter: parent.horizontalCenter
-            font.family: "Perfect DOS VGA 437"; font.pixelSize: 21
+            font.family: "Perfect DOS VGA 437 Universal"; font.pixelSize: 21
             color: "#e8f4fa"
             opacity: 0
             style: Text.Raised; styleColor: "#0a5DADE2"
@@ -116,7 +116,7 @@ PanelWindow {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "// THE INDEX"
-            font.family: "Perfect DOS VGA 437"; font.pixelSize: 14
+            font.family: "Perfect DOS VGA 437 Universal"; font.pixelSize: 14
             color: "#3A7CA5"
             opacity: subMain.opacity
         }

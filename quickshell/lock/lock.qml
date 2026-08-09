@@ -58,6 +58,7 @@ ShellRoot {
             property color warnColor: "#FF6B6B"
             property color successColor: "#5DE285"
             property bool  introActive: true
+            property bool  unlocking: false
 
             // ---- state ----
             property int failCount: 0
@@ -70,7 +71,7 @@ ShellRoot {
             property bool pamSuccess: false
             property bool minElapsed: false
 
-            FontLoader { id: pixelFont; source: Qt.resolvedUrl("assets/PerfectDOSVGA437.ttf") }
+            FontLoader { id: pixelFont; source: Qt.resolvedUrl("assets/PerfectDOSVGA437-Universal.ttf") }
 
             Settings { id: volSettings; property real volume: 0.5 }
 
@@ -98,6 +99,9 @@ ShellRoot {
             function fadeMusic() { musicFadeOut.start() }
 
             // ======================= PAM =========================
+            // Use separate PAM contexts for the normal login and the
+            // "WILL OF THE CITY" re-auth. Reusing one PamContext for both can
+            // leave the response state stuck after several failed attempts.
             PamContext {
                 id: pam
                 config: "login"
@@ -105,7 +109,23 @@ ShellRoot {
 
                 onResponseRequiredChanged: {
                     if (responseRequired)
-                        respond(surf.inFinalAuth ? defensePassword.text : passwordInput.text)
+                        respond(passwordInput.text)
+                }
+                onCompleted: function(result) {
+                    surf.pamDone = true
+                    surf.pamSuccess = (result === PamResult.Success)
+                    surf.tryResolve()
+                }
+            }
+
+            PamContext {
+                id: finalPam
+                config: "login"
+                user: surf.currentUsername
+
+                onResponseRequiredChanged: {
+                    if (responseRequired)
+                        respond(defensePassword.text)
                 }
                 onCompleted: function(result) {
                     surf.pamDone = true
@@ -120,7 +140,10 @@ ShellRoot {
                 surf.pamSuccess = false
                 surf.minElapsed = false
                 dramaTimer.restart()
-                pam.start()
+                if (finalAuth)
+                    finalPam.start()
+                else
+                    pam.start()
             }
             function tryResolve() {
                 if (surf.pamDone && surf.minElapsed) {
@@ -439,6 +462,9 @@ ShellRoot {
             function applyResult(ok) {
                 scrambleTimer.stop()
                 if (ok) {
+                    // cancel any queued deny/poweroff from earlier attempts
+                    answerTypeTimer.stop(); afterDenyTimer.stop(); defenseModalTrigger.stop()
+                    surf.unlocking = true
                     scrambleDisplay.text = "_ACCESS_GRANTED._"; scrambleDisplay.color = surf.successColor
                     statusMessage.text = ">_LOGIN_SUCCESS._"; statusMessage.color = surf.successColor
                     playSuccess(); fadeMusic(); unlockTimer.start()
@@ -611,8 +637,13 @@ ShellRoot {
             function applyFinalResult(ok) {
                 surf.passwordCheckRunning = false
                 if (ok) {
+                    // cancel anything a previous failed attempt queued, or it
+                    // will power the machine off after a SUCCESSFUL login
+                    answerTypeTimer.stop(); afterDenyTimer.stop()
+                    answerLine.visible = false
                     defenseStatus.text = ">_AUTHORIZATION GRANTED. Welcome, Fixer._"; defenseStatus.color = surf.successColor
                     playSuccess(); fadeMusic()
+                    surf.unlocking = true
                     successFade.start(); finalUnlock.start()
                 } else {
                     defensePassword.text = ""
@@ -623,7 +654,8 @@ ShellRoot {
                 }
             }
 
-            // typewriter for the answer line, then SAFE reset (no poweroff)
+            // Wrong WILL OF THE CITY / Fixer password -> power off.
+            // Keep the guard so this cannot fire after a successful unlock.
             property int answerIdx: 0
             Timer {
                 id: answerTypeTimer
@@ -640,7 +672,7 @@ ShellRoot {
                 id: afterDenyTimer
                 interval: 2200; repeat: false
                 onTriggered: {
-                    // wrong FIXER password -> POWER OFF (Project Moon "Fixer" behavior)
+                    if (!sessionLock.locked || surf.unlocking) return
                     defenseModal.opacity = 0.0
                     fadeMusic()
                     Quickshell.execDetached(["systemctl", "poweroff"])

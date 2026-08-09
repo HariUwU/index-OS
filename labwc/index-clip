@@ -1,0 +1,11 @@
+#!/bin/sh
+# WILL OF THE CITY :: THE INDEX — clipboard history picker with a clear option
+CLEAR='>_ CLEAR HISTORY _<'
+pick=$( { printf '%s\n' "$CLEAR"; cliphist list; } | wofi --dmenu -p clipboard )
+[ -z "$pick" ] && exit 0
+if [ "$pick" = "$CLEAR" ]; then
+  cliphist wipe
+  notify-send -a 'THE INDEX' 'CLIPBOARD' 'history cleared' 2>/dev/null
+  exit 0
+fi
+printf '%s' "$pick" | cliphist decode | wl-copy

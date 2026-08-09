@@ -1,3 +1,4 @@
+//@ pragma UseQApplication
 // ============================================================
 //  WILL OF THE CITY :: THE INDEX  —  quickshell entry
 //  Loaded by `quickshell` (exec-once in hyprland.conf).
@@ -11,4 +12,7 @@ ShellRoot {
     Bar {}
     Atmosphere {}
     Notifications {}
+    Osd {}
+    Prescript {}
+    DeviceWatch {}
 }

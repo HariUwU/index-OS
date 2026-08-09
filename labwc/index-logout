@@ -1,0 +1,15 @@
+#!/bin/sh
+# WILL OF THE CITY :: THE INDEX — sign out: close apps, then lock.
+# Keeps the compositor + shell + lock running (autologin has no greeter).
+
+# ask every toplevel app to quit nicely, skipping our own pieces
+for p in $(ps -u "$(id -u)" -o pid=,comm= | grep -vE 'labwc|quickshell|swaybg|swayidle|pipewire|wireplumber|dbus|systemd|ssh-agent|gpg-agent|fish|bash|sh|ps|grep' | awk '{print $1}'); do
+  kill -TERM "$p" 2>/dev/null || true
+done
+sleep 2
+# anything still hanging on, force it
+for p in $(ps -u "$(id -u)" -o pid=,comm= | grep -vE 'labwc|quickshell|swaybg|swayidle|pipewire|wireplumber|dbus|systemd|ssh-agent|gpg-agent|fish|bash|sh|ps|grep' | awk '{print $1}'); do
+  kill -KILL "$p" 2>/dev/null || true
+done
+# now lock (the INDEX lock is the way back in)
+exec "$HOME/.config/labwc/index-lock"

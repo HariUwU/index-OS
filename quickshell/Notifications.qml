@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Notifications
+import "."
 
 PanelWindow {
     id: notifRoot
@@ -18,7 +19,7 @@ PanelWindow {
     WlrLayershell.namespace: "index-notifications"
     visible: col.children.length > 0
 
-    readonly property string pixel: "Perfect DOS VGA 437"
+    readonly property string pixel: "Perfect DOS VGA 437 Universal"
 
     NotificationServer {
         id: server
@@ -27,6 +28,11 @@ PanelWindow {
         imageSupported: true
         onNotification: function (n) {
             n.tracked = true
+            // DeviceWatch already plays its own connect/disconnect cue
+            if ((n.appName || "").indexOf("DEVICE") < 0)
+                Sfx.play(n.urgency === NotificationUrgency.Critical ? "error" : "notify")
+            NotifHistory.add(n.appName, n.summary, n.body,
+                             n.urgency === NotificationUrgency.Critical)
         }
     }
 
@@ -46,8 +52,11 @@ PanelWindow {
                 border.color: modelData.urgency === NotificationUrgency.Critical ? "#FF6B6B" : "#5DADE2"
                 border.width: 2
                 opacity: 0.0
-                Component.onCompleted: opacity = 0.97
-                Behavior on opacity { NumberAnimation { duration: 220 } }
+                property real slide: 70
+                transform: Translate { x: slide }
+                Component.onCompleted: { opacity = 0.97; slide = 0 }
+                Behavior on opacity { NumberAnimation { duration: 220; easing.type: Easing.OutQuad } }
+                Behavior on slide { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
                 ColumnLayout {
                     id: inner

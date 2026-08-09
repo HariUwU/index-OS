@@ -1,0 +1,17 @@
+#!/bin/sh
+# WILL OF THE CITY :: THE INDEX — idle daemon driven by a saved setting
+CONF="$HOME/.config/labwc/index.conf"
+LOCKER="$HOME/.config/labwc/index-lock"
+SEC=600
+[ -f "$CONF" ] && eval "$(grep -E '^[A-Z_]+=[^ ]*$' "$CONF" 2>/dev/null)" 2>/dev/null
+[ -n "$SCREEN_OFF_SEC" ] && SEC="$SCREEN_OFF_SEC"
+pkill -x swayidle 2>/dev/null
+sleep 0.3
+if [ "$SEC" -gt 0 ] 2>/dev/null; then
+  exec swayidle -w \
+    timeout "$SEC" 'wlopm --off \*' \
+    resume            'wlopm --on \*' \
+    lock          "sh $LOCKER"
+else
+  exec swayidle -w lock "sh $LOCKER"
+fi
