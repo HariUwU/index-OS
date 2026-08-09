@@ -101,10 +101,8 @@ Project Moon. This is an unaffiliated fan project.
 ---
 
 <div align="center">
-
-`#5DADE2` · `#85C5E8` · `#3A7CA5` · `#FF6B6B` · `#5DE285` · `#05080d`
-
-*"The Index keeps what the City forgets."*
+  
+*"We're simply carrying out our Prescript. No personal feelings are involved in this process.	"*
 
 `>_ THE INDEX_`
 
