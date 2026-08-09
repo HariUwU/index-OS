@@ -16,7 +16,7 @@
 
 ## What is this
 
-A complete desktop environment, themed after *The House of Spiders: The Index*.
+A complete desktop environment, themed after *The Index* from Project Moon.
 
 Built on **labwc** (window manager) and **quickshell** (bar, menus, lock).
 
