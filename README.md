@@ -4,7 +4,6 @@
 
 # WILL OF THE CITY :: THE INDEX
 
-**A cyan CRT desktop for Linux.**
 
 ![labwc](https://img.shields.io/badge/wm-labwc-5DADE2?style=flat-square&labelColor=05080d)
 ![quickshell](https://img.shields.io/badge/shell-quickshell-5DADE2?style=flat-square&labelColor=05080d)
