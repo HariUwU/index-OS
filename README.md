@@ -19,10 +19,6 @@
 
 A complete desktop environment, themed after *The House of Spiders: The Index*.
 
-Pixel font everywhere, glowing emblem wallpaper, `[_] [□] [X]` bracket titlebars
-on every window, apps recoloured cyan to match, and a boot that goes straight
-into a cinematic lock screen with your own intro video.
-
 Built on **labwc** (window manager) and **quickshell** (bar, menus, lock).
 
 > Install it on a fresh system with **no desktop environment** — this *is* the
@@ -87,13 +83,7 @@ Drop a file in `assets/`, re-run `./install.sh`.
 |------|-----------------|
 | `assets/intro.mp4` | boot intro video |
 | `assets/sounds/bg.mp3` | lock screen music |
-| `assets/sounds/ui/*.wav` | UI sounds |
 | `assets/DefaultProfile.jpg` | your profile picture |
-| `wallpaper/the-index.png` | wallpaper |
-| `assets/*.ttf` | any extra font |
-
-Your `intro.mp4` and generated `prescript.json` stay on your machine — they’re
-gitignored and never uploaded.
 
 ---
 
