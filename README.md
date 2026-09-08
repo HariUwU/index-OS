@@ -101,7 +101,7 @@ Project Moon. This is an unaffiliated fan project.
 
 <div align="center">
   
-*"We're simply carrying out our Prescript. No personal feelings are involved in this process.	"*
+*"_CLEAR_.	"*
 
 `>_ THE INDEX_`
 
