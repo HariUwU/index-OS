@@ -13,11 +13,11 @@ and updates from the repository. Run `index-setup` as your normal user afterward
 
 For local installation without configuring the repository:
 
-Download the provided `index-os-0.1.1rc13-1-any.pkg.tar.zst` file and open a
+Download the provided `index-os-1.0.0-1-any.pkg.tar.zst` file and open a
 terminal in its folder. Keep the package compressed; pacman reads it directly:
 
 ```sh
-sudo pacman -U ./index-os-0.1.1rc13-1-any.pkg.tar.zst
+sudo pacman -U ./index-os-1.0.0-1-any.pkg.tar.zst
 index-setup
 ```
 
@@ -35,7 +35,7 @@ drivers, working internet and a normal account with sudo remain prerequisites.
 When a matching `.sha256` file is supplied, verify the download before installing:
 
 ```sh
-sha256sum -c index-os-0.1.1rc13-1-any.pkg.tar.zst.sha256
+sha256sum -c index-os-1.0.0-1-any.pkg.tar.zst.sha256
 ```
 
 The optional-media setup screen and package upgrade were checked in the Arch
@@ -59,7 +59,7 @@ font remains the system font. Package generation excludes only video files and
 From the repository root, on Windows or Linux:
 
 ```sh
-python3 packaging/arch/prepare.py --version 0.1.1rc13 --output dist/arch
+python3 packaging/arch/prepare.py --version 1.0.0 --output dist/arch
 ```
 
 This creates `dist/arch/PKGBUILD`, a runtime source archive with a real SHA-256
@@ -71,7 +71,7 @@ Build on Arch as a normal user with `base-devel` available:
 ```sh
 cd dist/arch
 makepkg
-sudo pacman -U ./index-os-0.1.1rc13-1-any.pkg.tar.zst
+sudo pacman -U ./index-os-1.0.0-1-any.pkg.tar.zst
 index-setup
 ```
 

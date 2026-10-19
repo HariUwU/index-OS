@@ -30,7 +30,7 @@ optdepends=(
 )
 options=('!strip')
 install=index-os.install
-source=("${pkgname}-${pkgver}.tar.gz")
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/HariUwU/index-OS/releases/download/v${pkgver}/${pkgname}-${pkgver}-installer.tar.gz")
 sha256sums=('@SHA256@')
 
 package() {

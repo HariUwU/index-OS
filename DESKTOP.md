@@ -26,7 +26,7 @@ Enable the [signed INDEX pacman repository](packaging/repo/README.md) once, then
 run `sudo pacman -Syu index-os` and `index-setup`. After synchronization, the
 package is available through `sudo pacman -S index-os`.
 
-For the native Arch package, run `sudo pacman -U ./index-os-0.1.1rc13-1-any.pkg.tar.zst`,
+For the native Arch package, run `sudo pacman -U ./index-os-1.0.0-1-any.pkg.tar.zst`,
 then `index-setup` as your normal user. Pacman installs the selector and its basic
 dependencies; the same checklist below applies your chosen components. See
 [package instructions](packaging/arch/README.md) for verification and removal.

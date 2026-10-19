@@ -10,7 +10,7 @@ import tarfile
 
 ROOT = Path(__file__).resolve().parents[2]
 ROOT_FILES = ('install.sh', 'install-desktop.sh', 'install-greeter.sh', 'setup.sh',
-              'README.md', 'DESKTOP.md', 'LICENSE', 'ATTRIBUTION.md')
+              'README.md', 'DESKTOP.md', 'LICENSE', 'ATTRIBUTION.md', 'VERSION', 'CHANGELOG.md')
 DIRECTORIES = ('assets', 'bridge', 'cursor/index-needle/src', 'fastfetch', 'greeter', 'kde',
                'quickshell', 'session', 'wallpaper')
 SUFFIXES = {'.qml', '.js', '.json', '.jsonc', '.png', '.jpg', '.jpeg', '.svg', '.mp4', '.mp3',
@@ -91,7 +91,7 @@ def prepare(output, version):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, default=ROOT / 'dist/arch')
-    parser.add_argument('--version', default='0.1.0')
+    parser.add_argument('--version', default=(ROOT / 'VERSION').read_text(encoding='utf-8').strip())
     args = parser.parse_args()
     try:
         prepare(args.output.resolve(), args.version)

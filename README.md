@@ -83,7 +83,7 @@ cd index-OS
 bash install.sh
 ```
 
-Or download the [RC13 source installer](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc13/index-os-0.1.1rc13-installer.tar.gz),
+Or download the [1.0 source installer](https://github.com/HariUwU/index-OS/releases/download/v1.0.0/index-os-1.0.0-installer.tar.gz),
 extract it, and run `bash install.sh` inside its folder. Keep the extracted files together.
 
 Source installs also accept `assets/intro.mp4` and `assets/sounds/bg.mp3` in
@@ -92,12 +92,13 @@ To preview a selection, run `bash install.sh --components desktop,login --dry-ru
 
 ## Notes
 
-This is a release candidate tested in an Arch VirtualBox VM. The screenshot
-above is from that VM.
+Current release: [1.0.0](https://github.com/HariUwU/index-OS/releases/tag/v1.0.0).
+Tested in an Arch VirtualBox VM; the screenshot above is from that VM.
 
 - [Desktop settings and restoration](DESKTOP.md)
 - [Local package installation and removal](packaging/arch/README.md)
 - [Credits and font information](ATTRIBUTION.md)
 - [License](LICENSE)
+- [Changelog](CHANGELOG.md)
 
 The previous labwc version is on the [`old` branch](https://github.com/HariUwU/index-OS/tree/old).
