@@ -146,7 +146,7 @@ def main():
             run(['sudo', 'pacman', '-S', '--needed', *packages])
     features = ','.join(name for name in COMPONENTS if name in selected and name not in ('desktop', 'login', 'intro', 'cursor'))
     if 'desktop' in selected:
-        run(['bash', SRC / 'install.sh', '--no-packages', '--features=' + features])
+        run(['bash', SRC / 'install-desktop.sh', '--no-packages', '--features=' + features])
     else:
         extras = ','.join(name for name in ('terminals', 'fastfetch') if name in selected)
         if extras:

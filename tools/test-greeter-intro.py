@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run the launcher's real boot-claim block in isolated directories, never cage.
 
-Run: python3 new/tools/test-greeter-intro.py
+Run: python3 tools/test-greeter-intro.py
 Requires a local POSIX sh (Git for Windows sh is also supported).
 """
 from concurrent.futures import ThreadPoolExecutor

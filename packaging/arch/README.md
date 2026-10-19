@@ -31,9 +31,9 @@ When a matching `.sha256` file is supplied, verify the download before installin
 sha256sum -c index-os-0.1.1rc12-1-any.pkg.tar.zst.sha256
 ```
 
-RC12 package installation, removal/reinstallation, settings preservation and
-packaged Fastfetch setup were checked in the Arch VM. See
-[`qa/media-scope/README.md`](../../qa/media-scope/README.md).
+RC12 package installation, settings preservation and packaged desktop setup
+were checked in the Arch VM. Earlier package lifecycle checks also covered
+removal/reinstallation and isolated Fastfetch setup.
 
 ## Optional personal files
 
@@ -47,7 +47,7 @@ font remains the system font. Package generation excludes only video files and
 
 ## Prepare and build
 
-From `new/`, on Windows or Linux:
+From the repository root, on Windows or Linux:
 
 ```sh
 python3 packaging/arch/prepare.py --version 0.1.1rc12 --output dist/arch

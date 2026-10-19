@@ -2,7 +2,7 @@
 # ============================================================
 #  WILL OF THE CITY :: THE INDEX  —  installer (KWin + Quickshell)
 #
-#  Usage:  bash install.sh [--no-packages] [--features=CSV] [--restore]
+#  Usage:  bash install-desktop.sh [--no-packages] [--features=CSV] [--restore]
 #    (none)         install packages, copy files, apply settings
 #    --no-packages  skip the pacman/AUR step
 #    --restore      undo everything using the latest backup
@@ -160,7 +160,7 @@ if [ "$DO_PACKAGES" = 1 ]; then
             [ -n "$helper" ] || die "pacman could not install: ${missing[*]}
     Install an AUR helper (paru or yay) and run again, or install by hand:
       paru -S ${missing[*]}
-    Then run: bash install.sh --no-packages"
+    Then run: bash install-desktop.sh --no-packages"
             info "using $helper for: ${missing[*]}"
             "$helper" -S --needed --noconfirm "${missing[@]}"
         fi
@@ -168,7 +168,7 @@ if [ "$DO_PACKAGES" = 1 ]; then
 else
     step "Skipping packages (--no-packages)"
 fi
-command -v quickshell >/dev/null || die "quickshell is not installed. Install it, then run: bash install.sh --no-packages"
+command -v quickshell >/dev/null || die "quickshell is not installed. Install it, then run: bash install-desktop.sh --no-packages"
 
 # ------------------------------------------------------------
 #  2. Backup (only once per install; a second run keeps the first backup)
@@ -439,5 +439,5 @@ cat <<MSG
     THE INDEX is installed.
     >>> LOG OUT AND BACK IN to start the new shell. <<<
 
-    To undo everything:   bash $SRC/install.sh --restore
+    To undo everything:   bash $SRC/install-desktop.sh --restore
 MSG

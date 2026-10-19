@@ -3,7 +3,7 @@ set -euo pipefail
 case "${1:-}" in
     --restore)
         shift
-        exec bash /usr/share/index-os/install.sh --restore "$@" ;;
+        exec bash /usr/share/index-os/install-desktop.sh --restore "$@" ;;
     --restore-login)
         shift
         exec bash /usr/share/index-os/install-greeter.sh --restore "$@" ;;

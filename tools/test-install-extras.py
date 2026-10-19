@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Isolated installer regression tests. No real user settings or KDE session used.
 
-Run: python3 new/tools/test-install-extras.py
+Run: python3 tools/test-install-extras.py
 Set INDEX_TEST_BASH if bash is not on PATH (Windows Git Bash is auto-detected).
 """
 import json

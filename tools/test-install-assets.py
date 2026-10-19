@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Isolated asset and installer-copy tests; no real KDE, sudo or system writes.
 
-Run: python3 -B new/tools/test-install-assets.py
+Run: python3 -B tools/test-install-assets.py
 Set INDEX_TEST_BASH if needed (Windows Git Bash is auto-detected).
 """
 from contextlib import redirect_stdout
@@ -218,7 +218,7 @@ class InstallerCopyTests(unittest.TestCase):
             path.chmod(0o755)
 
     def run_block(self, login=False, fail=False):
-        name = 'install-greeter.sh' if login else 'install.sh'
+        name = 'install-greeter.sh' if login else 'install-desktop.sh'
         text = (SOURCE / name).read_text(encoding='utf-8')
         start = 'step "Installing the INDEX greeter to $DEST"' if login else 'step "Copying Quickshell config"'
         end = 'step "Configuring greetd"' if login else '#  4. Apply settings'

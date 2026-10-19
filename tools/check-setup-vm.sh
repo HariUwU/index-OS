@@ -40,7 +40,7 @@ grep -q 'intro-user.mp4' "$lock/IntroConfig.qml"
 python3 "$src/tools/index-intro.py" --scope user --default
 grep -q 'assets/intro.mp4' "$lock/IntroConfig.qml"
 echo 'PASS: custom video copy, validation, disable/enable and original-video reset'
-for script in install.sh install-greeter.sh setup.sh tools/install-extras.sh cursor/index-needle/build.sh; do
+for script in install.sh install-desktop.sh install-greeter.sh setup.sh tools/install-extras.sh cursor/index-needle/build.sh; do
     bash -n "$src/$script"
 done
 python3 -m compileall -q "$src/tools/setup.py" "$src/tools/index-intro.py" "$src/tools/configure-features.py" "$src/bridge/index-kwin-bridge" "$src/bridge/configure-shortcuts.py"

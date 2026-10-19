@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Cursor-step regression tests with a stub build and temporary data directory.
 
-Run: python3 new/tools/test-setup-cursor.py
+Run: python3 tools/test-setup-cursor.py
 Only the cursor branch is executed; no packages, shell commands or desktop writes.
 """
 import ast

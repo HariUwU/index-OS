@@ -142,7 +142,7 @@ screen reapplies its saved choice. Invalid or stalled video falls back to passwo
 
 ### Direct desktop setup
 
-The lower-level `install.sh` below expects Plasma and its command-line tools to
+The lower-level `install-desktop.sh` below expects Plasma and its command-line tools to
 be installed already. Use `bash setup.sh` above for installation from bare Arch;
 `--no-packages` is only for systems whose selected dependencies are already present.
 
@@ -151,8 +151,8 @@ font (Perfect DOS VGA 437 Universal). Already-open apps may need reopening
 after installation to pick up the new font.
 
 ```bash
-bash install.sh                # install and apply
-bash install.sh --no-packages  # skip pacman
+bash install-desktop.sh                # install and apply
+bash install-desktop.sh --no-packages  # skip pacman
 ```
 
 Then log out and log in again. The script makes a backup first, and you can
@@ -161,7 +161,7 @@ run it twice without problems.
 ## Restore
 
 ```bash
-bash install.sh --restore
+bash install-desktop.sh --restore
 ```
 
 This brings back the Plasma shell, removes the INDEX service and restores your

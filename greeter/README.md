@@ -9,7 +9,7 @@ The INDEX lock screen (`../quickshell/lock/lock.qml`) ported to a **greetd login
 - **User:** read from `/usr/share/index-greeter/user` (one line). If the file is missing it falls back to `index`.
 - **Session:** on success it calls `Greetd.launch()` with `/usr/lib/plasma-dbus-run-session-if-needed /usr/bin/startplasma-wayland` and sets `XDG_SESSION_TYPE=wayland` and `XDG_CURRENT_DESKTOP=KDE`.
 - **Auth:** each attempt is a single greetd round (`createSession`, `respond`, `readyToLaunch`). After 3 failures the WILL OF THE CITY modal appears. A wrong FIXER password powers the machine off (the original INDEX protocol); a greetd error just returns to the prompt.
-- **Intro:** login frequency defaults to **Once per boot** for both supplied assets/intro.mp4 and custom video. After logout, the login screen goes straight to the password. Select **Every login** in INDEX Intro Video settings, or run `python3 tools/index-intro.py --scope login --frequency always` from `new/`, to play whenever the greeter opens. Use `--frequency boot` to restore the default. Changing frequency preserves the selected video and on/off state; changing/resetting video preserves frequency. Lock-screen frequency is independent and unchanged.
+- **Intro:** login frequency defaults to **Once per boot** for both supplied assets/intro.mp4 and custom video. After logout, the login screen goes straight to the password. Select **Every login** in INDEX Intro Video settings, or run `python3 tools/index-intro.py --scope login --frequency always` from the repository root, to play whenever the greeter opens. Use `--frequency boot` to restore the default. Changing frequency preserves the selected video and on/off state; changing/resetting video preserves frequency. Lock-screen frequency is independent and unchanged.
 - **Override and skipping:** `INDEX_INTRO=0` suppresses playback in either mode; `INDEX_INTRO=1` still respects the configured frequency and enabled state. Press Esc or double-click and use SKIP to skip by hand. It also ends by itself if the video fails or hasn't started within about 2 s.
 
 `run-greeter` atomically claims a directory named after `/proc/sys/kernel/random/boot_id`
@@ -46,7 +46,7 @@ sudo -u greeter sh -c '
 '
 ```
 
-Source-only regression checks (run from `new/`):
+Source-only regression checks (run from the repository root):
 
 ```bash
 python3 -B tools/test-index-intro.py

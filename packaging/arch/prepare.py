@@ -9,7 +9,8 @@ import re
 import tarfile
 
 ROOT = Path(__file__).resolve().parents[2]
-ROOT_FILES = ('install.sh', 'install-greeter.sh', 'setup.sh', 'README.md', 'LICENSE', 'ATTRIBUTION.md')
+ROOT_FILES = ('install.sh', 'install-desktop.sh', 'install-greeter.sh', 'setup.sh',
+              'README.md', 'DESKTOP.md', 'LICENSE', 'ATTRIBUTION.md')
 DIRECTORIES = ('assets', 'bridge', 'cursor/index-needle/src', 'fastfetch', 'greeter', 'kde',
                'quickshell', 'session', 'wallpaper')
 SUFFIXES = {'.qml', '.js', '.json', '.jsonc', '.png', '.jpg', '.jpeg', '.svg', '.mp4', '.mp3',

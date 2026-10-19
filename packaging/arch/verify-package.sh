@@ -11,7 +11,7 @@ while IFS= read -r path; do
 done <<< "$entries"
 for required in \
     usr/bin/index-setup usr/bin/index-intro usr/share/applications/index-os.desktop \
-    usr/share/index-os/setup.sh usr/share/index-os/tools/setup.py \
+    usr/share/index-os/setup.sh usr/share/index-os/install-desktop.sh usr/share/index-os/tools/setup.py \
     usr/share/index-os/tools/setup_menu.py usr/share/index-os/tools/index-askpass.sh \
     usr/share/index-os/tools/install-assets.py \
     usr/share/index-os/bridge/index-kwin-bridge usr/share/index-os/quickshell/IntroSettings.qml \

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Exercise console setup orchestration with stub commands and temporary config.
 
-Run: python3 -B new/tools/test-setup-prerequisites.py
+Run: python3 -B tools/test-setup-prerequisites.py
 No packages, desktop settings or services are changed.
 """
 from contextlib import redirect_stdout
@@ -56,7 +56,7 @@ class ConsolePrerequisitesTests(unittest.TestCase):
                          'quickshell', 'dolphin', 'pipewire-pulse', 'wireplumber',
                          'kscreen', 'plasma-nm', 'plasma-pa', 'bluedevil', 'greetd', 'cage'} <= set(packages))
         self.assertEqual(len(packages), len(set(packages)), 'No repeated package arguments')
-        self.assertEqual(self.commands[1], ['bash', str(setup.SRC / 'install.sh'),
+        self.assertEqual(self.commands[1], ['bash', str(setup.SRC / 'install-desktop.sh'),
                                             '--no-packages', '--features='])
         self.assertEqual(self.commands[2], ['bash', str(setup.SRC / 'install-greeter.sh'), '--no-packages'])
         self.assertEqual(self.commands[3][-3:], ['--scope', 'both', '--disable'])

@@ -3,7 +3,7 @@
 An INDEX desktop for **KDE Plasma 6 / KWin**, with floating windows, a Windows-style
 taskbar, Quickshell panels, native locking and an optional login screen.
 
-![INDEX desktop](new/wallpaper/the-index.png)
+![INDEX desktop](wallpaper/the-index.png)
 
 The previous labwc version is preserved on the
 [`old` branch](https://github.com/HariUwU/index-OS/tree/old). The current desktop
@@ -27,7 +27,7 @@ installs the dependencies for the components you choose. On bare Arch, select
 **Desktop + Login screen**. Up/Down moves, Space selects and Enter confirms.
 Pacman installs Python automatically, so the manual Python prerequisite below applies
 only to the extracted source installer. See the
-[pacman instructions](new/packaging/arch/README.md) for updates and removal.
+[pacman instructions](packaging/arch/README.md) for updates and removal.
 
 The tested package is a local installation file. `pacman -S index-os` requires
 an INDEX package repository; it is not published yet.
@@ -35,11 +35,15 @@ an INDEX package repository; it is not published yet.
 The INDEX logo, wallpaper, power icons and sound effects are included.
 Only the intro video and login background music are not bundled. To add your own,
 put `intro.mp4` and/or `sounds/bg.mp3` in `~/.local/share/index/assets/` before
-running `index-setup`. For source installation, use `new/assets/` instead.
-See [optional file names](new/assets/README.md). INDEX keeps the author's modified
+running `index-setup`. For source installation, use `assets/` instead.
+See [optional file names](assets/README.md). INDEX keeps the author's modified
 Universal font as its system font; no font download or replacement is required.
 
 ## Install from source
+
+The current repository has a flat layout: desktop files are at the root.
+The published RC12 installer archive retains its original extracted layout;
+keep its contents together and run its own `install.sh`.
 
 Clone this repository, or extract the complete
 [source installer](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc12/index-os-0.1.1rc12-installer.tar.gz),
@@ -50,8 +54,8 @@ bash install.sh
 ```
 
 Run as your normal user. Setup asks for sudo when installing dependencies or
-applying the optional login screen. Keep `install.sh` beside the included `new/`
-folder; the folder contains the desktop, themes and optional-file instructions.
+applying the optional login screen. Keep the complete checkout together: `install.sh`, `setup.sh`, `tools/`,
+`assets/` and the desktop folders belong at the repository root.
 
 Use **Up/Down** to move, **Space** to select features, and **Enter** to review and
 confirm. **Esc** cancels. Choose the desktop, login screen, intro, Fastfetch and
@@ -84,9 +88,9 @@ bash install.sh --components desktop,intro,fastfetch --dry-run
 ```
 
 Change videos later in **Win+A → Settings → Intro Video**.
-See [desktop instructions](new/README.md) for settings and restoration.
+See [desktop instructions](DESKTOP.md) for settings and restoration.
 
 This is a release candidate tested in an Arch VirtualBox VM.
 Personal videos/background music, historical sources and local test/build output are excluded
 from the publication tree. Font/source credits remain in
-[ATTRIBUTION.md](new/ATTRIBUTION.md).
+[ATTRIBUTION.md](ATTRIBUTION.md).

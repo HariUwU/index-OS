@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Isolated intro regression tests; ffprobe and privileged installs are mocked.
 
-Run: python3 new/tools/test-index-intro.py
+Run: python3 tools/test-index-intro.py
 """
 from contextlib import redirect_stderr, redirect_stdout
 import io
