@@ -1,0 +1,17 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Id": "org.index.desktop",
+        "Name": "THE INDEX",
+        "Description": "The original INDEX terminal look, custom panel, and native KDE floating windows.",
+        "Version": "0.1.0",
+        "Authors": [
+            {
+                "Name": "Lights (HariUwU)"
+            }
+        ],
+        "License": "GPL-3.0-or-later",
+        "Website": "https://github.com/HariUwU/index-OS"
+    },
+    "X-Plasma-API-Minimum-Version": "6.6"
+}

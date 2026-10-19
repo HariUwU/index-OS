@@ -1,0 +1,33 @@
+[kdeglobals][KDE]
+widgetStyle=Breeze
+
+[kdeglobals][General]
+ColorScheme=IndexDark
+font=Perfect DOS VGA 437 Universal,12,-1,5,50,0,0,0,0,0
+fixed=Perfect DOS VGA 437 Universal,12,-1,5,50,0,0,0,0,0
+menuFont=Perfect DOS VGA 437 Universal,12,-1,5,50,0,0,0,0,0
+toolBarFont=Perfect DOS VGA 437 Universal,12,-1,5,50,0,0,0,0,0
+smallestReadableFont=Perfect DOS VGA 437 Universal,10,-1,5,50,0,0,0,0,0
+
+[kdeglobals][WM]
+activeFont=Perfect DOS VGA 437 Universal,12,-1,5,50,0,0,0,0,0
+
+[kdeglobals][Icons]
+Theme=breeze-dark
+
+[plasmarc][Theme]
+name=index
+
+[kcminputrc][Mouse]
+cursorTheme=breeze_cursors
+
+[kwinrc][org.kde.kdecoration2]
+library=org.kde.kwin.aurorae
+theme=__aurorae__svg__index
+BorderSize=Normal
+
+[kwinrc][Windows]
+Placement=Centered
+
+[ksplashrc][KSplash]
+Theme=org.index.desktop

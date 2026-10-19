@@ -1,0 +1,22 @@
+# WILL OF THE CITY :: THE INDEX — clipboard history (Win+V)
+# Stores every copy (text and images) in cliphist; quickshell/Clipboard.qml
+# shows it. Replaces klipper, which lives in the disabled plasmashell.
+# wl-paste --watch needs the wlr-data-control / ext-data-control protocol
+# (KWin has it). If it is missing, wl-paste exits, systemd gives up after a
+# few restarts, and the history just stays empty: nothing else breaks.
+[Unit]
+Description=THE INDEX clipboard history (cliphist)
+PartOf=graphical-session.target
+After=plasma-kwin_wayland.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+# One watcher for text, one for images. If either one dies, exit non-zero so
+# systemd restarts both (the other is killed with the unit's cgroup).
+ExecStart=/bin/bash -c 'wl-paste --type text --watch cliphist store & wl-paste --type image --watch cliphist store & wait -n; exit 1'
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=plasma-workspace.target

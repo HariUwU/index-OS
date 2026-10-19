@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="224" viewBox="0 0 24 224">
+  <g id="active-center" transform="translate(0 0)">
+    <rect width="24" height="24" fill="none" fill-opacity="0"/>
+    <path d="M 7 9 L 12 14 L 17 9 M 7 14 L 12 19 L 17 14" fill="none" stroke="#85c5e8" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+  <g id="inactive-center" transform="translate(0 28)">
+    <rect width="24" height="24" fill="none" fill-opacity="0"/>
+    <path d="M 7 9 L 12 14 L 17 9 M 7 14 L 12 19 L 17 14" fill="none" stroke="#60859d" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+  <g id="hover-center" transform="translate(0 56)">
+    <rect width="24" height="24" fill="#1a2c3d"/>
+    <path d="M 7 9 L 12 14 L 17 9 M 7 14 L 12 19 L 17 14" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+  <g id="hover-inactive-center" transform="translate(0 84)">
+    <rect width="24" height="24" fill="#1a2c3d"/>
+    <path d="M 7 9 L 12 14 L 17 9 M 7 14 L 12 19 L 17 14" fill="none" stroke="#85c5e8" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+  <g id="pressed-center" transform="translate(0 112)">
+    <rect width="24" height="24" fill="#85c5e8"/>
+    <path d="M 7 9 L 12 14 L 17 9 M 7 14 L 12 19 L 17 14" fill="none" stroke="#05080c" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+  <g id="pressed-inactive-center" transform="translate(0 140)">
+    <rect width="24" height="24" fill="#60859d"/>
+    <path d="M 7 9 L 12 14 L 17 9 M 7 14 L 12 19 L 17 14" fill="none" stroke="#05080c" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+  <g id="deactivated-center" transform="translate(0 168)">
+    <rect width="24" height="24" fill="none" fill-opacity="0"/>
+    <path d="M 7 9 L 12 14 L 17 9 M 7 14 L 12 19 L 17 14" fill="none" stroke="#29495f" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+  <g id="deactivated-inactive-center" transform="translate(0 196)">
+    <rect width="24" height="24" fill="none" fill-opacity="0"/>
+    <path d="M 7 9 L 12 14 L 17 9 M 7 14 L 12 19 L 17 14" fill="none" stroke="#29495f" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"/>
+  </g>
+</svg>

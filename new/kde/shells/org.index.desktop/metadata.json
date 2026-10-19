@@ -1,0 +1,14 @@
+{
+    "KPackageStructure": "Plasma/Shell",
+    "KPlugin": {
+        "Id": "org.index.desktop",
+        "Name": "THE INDEX Desktop",
+        "Description": "INDEX desktop shell and original terminal-style native screen locker",
+        "Version": "0.2.0",
+        "Authors": [{"Name": "Lights (HariUwU)"}],
+        "License": "GPL-3.0-or-later",
+        "Website": "https://github.com/HariUwU/index-OS"
+    },
+    "X-Plasma-APIVersion": "2",
+    "X-Plasma-FallbackPackage": "org.kde.plasma.desktop"
+}

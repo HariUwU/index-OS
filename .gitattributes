@@ -1,0 +1,9 @@
+# Keep Linux installers executable as scripts after a Windows checkout.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ttf binary
+*.otf binary
+*.wav binary
+*.mp3 binary

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" role="img" aria-labelledby="title desc">
+  <title id="title">INDEX - Index Finger - draft C</title>
+  <desc id="desc">Review-only vector concept. Transparent background; cyan fill, white edge and dark outline.</desc>
+  <!-- Hotspot: x=13, y=3 in the 32 x 32 viewBox; origin top-left. Scale proportionally for 24/48 px. -->
+  <!-- Design draft only. No cursor binary, installation, theme change or activation. -->
+  <path d="M11 3H15V13H19V15H23V17H27V25H25V29H11V27H9V25H7V23H5V19H9V21H11Z" fill="#5DADE2" stroke="#05080d" stroke-width="3" stroke-linejoin="miter"/><path d="M11 3H15V13H19V15H23V17H27V25H25V29H11V27H9V25H7V23H5V19H9V21H11Z" fill="#5DADE2" stroke="#e6f2fa" stroke-width="1" stroke-linejoin="miter"/><path d="M12 5H14V14H12Z" fill="#85C5E8"/><path d="M16 16V21M20 18V22M24 20V23" fill="none" stroke="#05080d" stroke-width="1"/><path d="M12 26H24V28H12Z" fill="#e6f2fa"/><path d="M17 26H20V28H17Z" fill="#85C5E8"/>
+</svg>

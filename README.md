@@ -1,108 +1,92 @@
-<div align="center">
-
-![WILL OF THE CITY :: THE INDEX](preview/desktop.png)
-
 # WILL OF THE CITY :: THE INDEX
 
+An INDEX desktop for **KDE Plasma 6 / KWin**, with floating windows, a Windows-style
+taskbar, Quickshell panels, native locking and an optional login screen.
 
-![labwc](https://img.shields.io/badge/wm-labwc-5DADE2?style=flat-square&labelColor=05080d)
-![quickshell](https://img.shields.io/badge/shell-quickshell-5DADE2?style=flat-square&labelColor=05080d)
-![arch](https://img.shields.io/badge/arch-tested-5DE285?style=flat-square&labelColor=05080d)
-![licence](https://img.shields.io/badge/code-GPL--3.0-5DADE2?style=flat-square&labelColor=05080d)
+![INDEX desktop](new/wallpaper/the-index.png)
 
-</div>
+The previous labwc version is preserved on the
+[`old` branch](https://github.com/HariUwU/index-OS/tree/old). The current desktop
+and installer live on `main`.
 
----
+## Install with pacman
 
-## What is this
+Download the [RC12 pacman package](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc12/index-os-0.1.1rc12-1-any.pkg.tar.zst)
+and its [SHA256 checksum](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc12/index-os-0.1.1rc12-1-any.pkg.tar.zst.sha256).
 
-A complete desktop environment, themed after *The Index* from Project Moon.
-
-Built on **labwc** (window manager) and **quickshell** (bar, menus, lock).
-
-> Install it on a fresh system with **no desktop environment** — this *is* the
-> desktop. It will replace what you have.
-
----
-
-## Install
-
-You need an Arch-based system (CachyOS, EndeavourOS, Arch) with no desktop
-environment installed.
+Install the native Arch package with pacman, then open the component selector:
 
 ```bash
-sudo pacman -S --needed git base-devel
-
-git clone https://aur.archlinux.org/yay.git ~/yay && (cd ~/yay && makepkg -si)
-
-git clone https://github.com/HariUwU/index-OS.git ~/index-OS
-cd ~/index-OS && ./install.sh
-
-reboot
+sudo pacman -U ./index-os-0.1.1rc12-1-any.pkg.tar.zst
+index-setup
 ```
 
-That’s it. The installer handles everything and prints a checklist when it’s
-done — every line should be green. Reboot and your machine goes straight to the
-INDEX lock screen.
+Run `index-setup` as your normal user, or launch **INDEX Setup** from the app
+menu. Pacman installs the setup command and its basic dependencies; the selector
+installs the dependencies for the components you choose. On bare Arch, select
+**Desktop + Login screen**. Up/Down moves, Space selects and Enter confirms.
+Pacman installs Python automatically, so the manual Python prerequisite below applies
+only to the extracted source installer. See the
+[pacman instructions](new/packaging/arch/README.md) for updates and removal.
 
-Safe to re-run `./install.sh` any time.
+The tested package is a local installation file. `pacman -S index-os` requires
+an INDEX package repository; it is not published yet.
 
-<details>
-<summary>Other distros (Debian, Ubuntu, Fedora, openSUSE)</summary>
+The INDEX logo, wallpaper, power icons and sound effects are included.
+Only the intro video and login background music are not bundled. To add your own,
+put `intro.mp4` and/or `sounds/bg.mp3` in `~/.local/share/index/assets/` before
+running `index-setup`. For source installation, use `new/assets/` instead.
+See [optional file names](new/assets/README.md). INDEX keeps the author's modified
+Universal font as its system font; no font download or replacement is required.
 
-<br>
+## Install from source
 
-The installer detects `apt` / `dnf` / `zypper` and installs the right packages,
-but this is **experimental** — quickshell is only packaged on Arch, so it gets
-compiled from source. That’s slow and the most likely thing to fail.
+Clone this repository, or extract the complete
+[source installer](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc12/index-os-0.1.1rc12-installer.tar.gz),
+open a terminal in its folder, then run:
 
-</details>
+```bash
+bash install.sh
+```
 
----
+Run as your normal user. Setup asks for sudo when installing dependencies or
+applying the optional login screen. Keep `install.sh` beside the included `new/`
+folder; the folder contains the desktop, themes and optional-file instructions.
 
-## What you get
+Use **Up/Down** to move, **Space** to select features, and **Enter** to review and
+confirm. **Esc** cancels. Choose the desktop, login screen, intro, Fastfetch and
+other features independently; required components are selected together.
 
-- **Bracket titlebars** on every window, forced server-side so apps use one bar
-- **The bar** — start menu with search, workspaces, taskbar, media, network,
-  bluetooth, battery, volume, keyboard layout, tray, centred clock
-- **Panels** — wifi picker, bluetooth pairing, notification history, quick settings
-- **The lock** — boot intro video, scramble auth, WILL OF THE CITY fixer modal
-- **Prescript of the day** — a desktop widget that scrambles into a new
-  instruction each morning
-- **Sound and animation** throughout, with an ON/OFF toggle
-- **Silent boot** — autologin straight into the lock, no text, no flash
+Works from an installed Arch Linux text console or an existing Arch-based KDE
+Plasma 6 system. Start with a bootable system, working internet, suitable graphics
+drivers, and a normal user allowed to use `sudo`. Install Python 3 first:
 
----
+```bash
+sudo pacman -Syu --needed python
+```
 
-## Make it yours
+On a fresh system, select **Desktop + Login screen** and reboot after setup.
+Setup installs Plasma/KWin, the INDEX shell and their runtime dependencies before
+applying settings; KDE does not need to be preinstalled. Login screen installs and
+enables the INDEX display manager for graphical login at boot. It is optional
+and is not selected by default.
 
-Drop a file in `assets/`, re-run `./install.sh`.
+With **Desktop** alone, use your existing display manager's **Plasma (Wayland)**
+session. If there is no display manager, log in at a local text console and run
+`startplasma-wayland` each time. Setup does not silently enable a display manager.
 
-| File | What it changes |
-|------|-----------------|
-| `assets/intro.mp4` | boot intro video |
-| `assets/sounds/bg.mp3` | lock screen music |
-| `assets/DefaultProfile.jpg` | your profile picture |
+Dependencies use pacman by default, or your existing yay installation:
 
----
+```bash
+bash install.sh --manager yay
+bash install.sh --components desktop,login --dry-run
+bash install.sh --components desktop,intro,fastfetch --dry-run
+```
 
-## Licence
+Change videos later in **Win+A → Settings → Intro Video**.
+See [desktop instructions](new/README.md) for settings and restoration.
 
-Code is **GPL-3.0**. Original artwork, sounds and the extended pixel fonts are
-also available under **CC BY-SA 4.0**.
-
-Some bundled files belong to other people and are not relicensed here — see
-[ATTRIBUTION.md](ATTRIBUTION.md).
-
-*Limbus Company* and *The House of Spiders: The Index* are the property of
-Project Moon. This is an unaffiliated fan project.
-
----
-
-<div align="center">
-  
-*"_CLEAR_.	"*
-
-`>_ THE INDEX_`
-
-</div>
+This is a release candidate tested in an Arch VirtualBox VM.
+Personal videos/background music, historical sources and local test/build output are excluded
+from the publication tree. Font/source credits remain in
+[ATTRIBUTION.md](new/ATTRIBUTION.md).

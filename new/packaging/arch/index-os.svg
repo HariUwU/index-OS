@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Original geometric application icon; no external artwork. -->
+  <rect x="2" y="2" width="60" height="60" rx="4" fill="#05080d" stroke="#5dade2" stroke-width="2"/>
+  <path d="M20 16H12V48H20M44 16H52V48H44M26 20H38M32 20V44M26 44H38" fill="none" stroke="#85c5e8" stroke-width="3"/>
+</svg>

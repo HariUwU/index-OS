@@ -1,0 +1,49 @@
+pkgname=index-os
+pkgver=@VERSION@
+pkgrel=1
+pkgdesc='INDEX desktop theme and selectable component installer for KDE Plasma 6'
+arch=('any')
+url='https://github.com/HariUwU/index-OS'
+license=('GPL-3.0-or-later' 'custom')
+depends=('bash' 'python' 'sudo')
+optdepends=(
+  'plasma-desktop: desktop and KDE settings'
+  'quickshell: INDEX desktop and login interface'
+  'qt6-multimedia: intro video and sound playback'
+  'qt6-5compat: desktop visual effects'
+  'python-dbus: KWin window and shortcut bridge'
+  'python-gobject: KWin bridge event loop'
+  'kdialog: login intro password dialog'
+  'ffmpeg: custom intro video validation'
+  'greetd: optional boot login screen'
+  'cage: optional boot login compositor'
+  'fastfetch: INDEX system information logo'
+  'konsole: INDEX terminal profile'
+  'alacritty: optional terminal theme'
+  'cliphist: optional clipboard history'
+  'wl-clipboard: optional clipboard integration'
+  'spectacle: optional screenshot shortcut'
+  'plasma-systemmonitor: optional task manager shortcut'
+  'brightnessctl: hardware brightness control'
+  'librsvg: optional cursor theme build'
+  'xorg-xcursorgen: optional cursor theme build'
+)
+options=('!strip')
+install=index-os.install
+source=("${pkgname}-${pkgver}.tar.gz")
+sha256sums=('@SHA256@')
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  install -d "${pkgdir}/usr/share/index-os"
+  cp -r . "${pkgdir}/usr/share/index-os/"
+  find "${pkgdir}/usr/share/index-os" -type d -exec chmod 755 {} +
+  find "${pkgdir}/usr/share/index-os" -type f -exec chmod 644 {} +
+  chmod 755 "${pkgdir}/usr/share/index-os/tools/index-askpass.sh"
+  install -Dm755 packaging/arch/index-setup "${pkgdir}/usr/bin/index-setup"
+  install -Dm755 packaging/arch/index-intro "${pkgdir}/usr/bin/index-intro"
+  install -Dm644 packaging/arch/index-os.desktop "${pkgdir}/usr/share/applications/index-os.desktop"
+  install -Dm644 assets/Logo.png "${pkgdir}/usr/share/pixmaps/index-os.png"
+  install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  install -Dm644 ATTRIBUTION.md "${pkgdir}/usr/share/licenses/${pkgname}/ATTRIBUTION.md"
+}

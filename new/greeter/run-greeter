@@ -1,0 +1,30 @@
+#!/bin/sh
+# ============================================================
+#  WILL OF THE CITY :: THE INDEX  —  greeter launcher
+#  greetd runs this as the greeter user (see install-greeter.sh).
+# ============================================================
+# software video decode: some GPUs/VMs crash the intro otherwise
+export QT_FFMPEG_DECODING_HW_DEVICE_TYPES=none
+# the greeter user has no writable home; keep Qt/Quickshell state in /tmp
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-/tmp/index-greeter-cache}" XDG_DATA_HOME=/tmp/index-greeter-data XDG_CONFIG_HOME=/tmp/index-greeter-config
+# Claim the first launch, not successful playback: skip/error/disabled intros
+# must not turn a later logout into another boot intro. mkdir is atomic.
+export INDEX_INTRO_BOOT=0
+boot_id=$(cat /proc/sys/kernel/random/boot_id 2>/dev/null)
+case "$boot_id" in
+    ''|*[!0-9a-f-]*) ;;
+    ????????-????-????-????-????????????)
+        # Provisioned by install-greeter.sh; persistent state survives cache cleanup.
+        # Never create the parent here: missing/unwritable state skips boot playback.
+        intro_state=${INDEX_GREETER_INTRO_STATE_DIR:-/var/lib/index-greeter-intro}
+        if [ -d "$intro_state" ] && [ -w "$intro_state" ] &&
+                (umask 077; mkdir "$intro_state/$boot_id") 2>/dev/null; then
+            export INDEX_INTRO_BOOT=1
+        fi
+        ;;
+esac
+# virtual GPUs (VirtualBox/VMware) can't share GPU buffers with cage: render in software there
+if systemd-detect-virt -q; then export LIBGL_ALWAYS_SOFTWARE=1 WLR_RENDERER=pixman; fi
+# One complete login surface: cage's default "extend" mode spans monitors and
+# can put the password field across their boundary after a multi-output logout.
+exec cage -m last -s -d -- quickshell -p /usr/share/index-greeter/greeter.qml > /tmp/index-greeter.log 2>&1

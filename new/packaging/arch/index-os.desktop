@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=INDEX Setup
+Comment=Choose INDEX desktop, login, intro and other components
+Exec=index-setup
+Icon=index-os
+Terminal=true
+Categories=Settings;DesktopSettings;
+Keywords=INDEX;desktop;theme;intro;installer;

@@ -1,0 +1,41 @@
+# WILL OF THE CITY :: THE INDEX  -  Alacritty theme (0.13+)
+
+[colors.primary]
+background = "#05080d"
+foreground = "#c8dcea"
+
+[colors.cursor]
+text   = "#05080d"
+cursor = "#5DADE2"
+
+[colors.selection]
+text       = "#e6f2fa"
+background = "#3A7CA5"
+
+[colors.normal]
+black   = "#0a0e16"
+red     = "#FF6B6B"
+green   = "#4DB6AC"
+yellow  = "#C9A646"
+blue    = "#3F6FB5"
+magenta = "#8E7CC3"
+cyan    = "#5DADE2"
+white   = "#c8dcea"
+
+[colors.bright]
+black   = "#3a4a5c"
+red     = "#FF8E8E"
+green   = "#7FD6CC"
+yellow  = "#E0C068"
+blue    = "#6A9BE0"
+magenta = "#B09EE0"
+cyan    = "#85C5E8"
+white   = "#e6f2fa"
+
+[font]
+normal = { family = "Perfect DOS VGA 437 Universal" }
+size = 12
+
+[window]
+padding = { x = 10, y = 8 }
+opacity = 0.94

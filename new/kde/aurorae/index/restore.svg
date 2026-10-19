@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="208" viewBox="0 0 22 208">
+  <g id="active-center" transform="translate(0 0)" shape-rendering="crispEdges">
+    <rect width="22" height="22" fill="#0a0e16" fill-opacity="0"/>
+    <path d="M 5 5 H 2 V 17 H 5 V 16 H 3 V 6 H 5 Z M 17 5 H 20 V 17 H 17 V 16 H 19 V 6 H 17 Z M 9 7 h 1 v 1 h -1 Z M 12 7 h 1 v 1 h -1 Z M 9 8 h 1 v 1 h -1 Z M 12 8 h 1 v 1 h -1 Z M 7 9 h 1 v 1 h -1 Z M 8 9 h 1 v 1 h -1 Z M 9 9 h 1 v 1 h -1 Z M 10 9 h 1 v 1 h -1 Z M 11 9 h 1 v 1 h -1 Z M 12 9 h 1 v 1 h -1 Z M 13 9 h 1 v 1 h -1 Z M 14 9 h 1 v 1 h -1 Z M 9 10 h 1 v 1 h -1 Z M 12 10 h 1 v 1 h -1 Z M 9 11 h 1 v 1 h -1 Z M 12 11 h 1 v 1 h -1 Z M 7 12 h 1 v 1 h -1 Z M 8 12 h 1 v 1 h -1 Z M 9 12 h 1 v 1 h -1 Z M 10 12 h 1 v 1 h -1 Z M 11 12 h 1 v 1 h -1 Z M 12 12 h 1 v 1 h -1 Z M 13 12 h 1 v 1 h -1 Z M 14 12 h 1 v 1 h -1 Z M 9 13 h 1 v 1 h -1 Z M 12 13 h 1 v 1 h -1 Z M 9 14 h 1 v 1 h -1 Z M 12 14 h 1 v 1 h -1 Z" fill="#85c5e8"/>
+  </g>
+  <g id="inactive-center" transform="translate(0 26)" shape-rendering="crispEdges">
+    <rect width="22" height="22" fill="#0a0e16" fill-opacity="0"/>
+    <path d="M 5 5 H 2 V 17 H 5 V 16 H 3 V 6 H 5 Z M 17 5 H 20 V 17 H 17 V 16 H 19 V 6 H 17 Z M 9 7 h 1 v 1 h -1 Z M 12 7 h 1 v 1 h -1 Z M 9 8 h 1 v 1 h -1 Z M 12 8 h 1 v 1 h -1 Z M 7 9 h 1 v 1 h -1 Z M 8 9 h 1 v 1 h -1 Z M 9 9 h 1 v 1 h -1 Z M 10 9 h 1 v 1 h -1 Z M 11 9 h 1 v 1 h -1 Z M 12 9 h 1 v 1 h -1 Z M 13 9 h 1 v 1 h -1 Z M 14 9 h 1 v 1 h -1 Z M 9 10 h 1 v 1 h -1 Z M 12 10 h 1 v 1 h -1 Z M 9 11 h 1 v 1 h -1 Z M 12 11 h 1 v 1 h -1 Z M 7 12 h 1 v 1 h -1 Z M 8 12 h 1 v 1 h -1 Z M 9 12 h 1 v 1 h -1 Z M 10 12 h 1 v 1 h -1 Z M 11 12 h 1 v 1 h -1 Z M 12 12 h 1 v 1 h -1 Z M 13 12 h 1 v 1 h -1 Z M 14 12 h 1 v 1 h -1 Z M 9 13 h 1 v 1 h -1 Z M 12 13 h 1 v 1 h -1 Z M 9 14 h 1 v 1 h -1 Z M 12 14 h 1 v 1 h -1 Z" fill="#60859d"/>
+  </g>
+  <g id="hover-center" transform="translate(0 52)" shape-rendering="crispEdges">
+    <rect width="22" height="22" fill="#1a2c3d" fill-opacity="1"/>
+    <path d="M 5 5 H 2 V 17 H 5 V 16 H 3 V 6 H 5 Z M 17 5 H 20 V 17 H 17 V 16 H 19 V 6 H 17 Z M 9 7 h 1 v 1 h -1 Z M 12 7 h 1 v 1 h -1 Z M 9 8 h 1 v 1 h -1 Z M 12 8 h 1 v 1 h -1 Z M 7 9 h 1 v 1 h -1 Z M 8 9 h 1 v 1 h -1 Z M 9 9 h 1 v 1 h -1 Z M 10 9 h 1 v 1 h -1 Z M 11 9 h 1 v 1 h -1 Z M 12 9 h 1 v 1 h -1 Z M 13 9 h 1 v 1 h -1 Z M 14 9 h 1 v 1 h -1 Z M 9 10 h 1 v 1 h -1 Z M 12 10 h 1 v 1 h -1 Z M 9 11 h 1 v 1 h -1 Z M 12 11 h 1 v 1 h -1 Z M 7 12 h 1 v 1 h -1 Z M 8 12 h 1 v 1 h -1 Z M 9 12 h 1 v 1 h -1 Z M 10 12 h 1 v 1 h -1 Z M 11 12 h 1 v 1 h -1 Z M 12 12 h 1 v 1 h -1 Z M 13 12 h 1 v 1 h -1 Z M 14 12 h 1 v 1 h -1 Z M 9 13 h 1 v 1 h -1 Z M 12 13 h 1 v 1 h -1 Z M 9 14 h 1 v 1 h -1 Z M 12 14 h 1 v 1 h -1 Z" fill="#ffffff"/>
+  </g>
+  <g id="hover-inactive-center" transform="translate(0 78)" shape-rendering="crispEdges">
+    <rect width="22" height="22" fill="#1a2c3d" fill-opacity="1"/>
+    <path d="M 5 5 H 2 V 17 H 5 V 16 H 3 V 6 H 5 Z M 17 5 H 20 V 17 H 17 V 16 H 19 V 6 H 17 Z M 9 7 h 1 v 1 h -1 Z M 12 7 h 1 v 1 h -1 Z M 9 8 h 1 v 1 h -1 Z M 12 8 h 1 v 1 h -1 Z M 7 9 h 1 v 1 h -1 Z M 8 9 h 1 v 1 h -1 Z M 9 9 h 1 v 1 h -1 Z M 10 9 h 1 v 1 h -1 Z M 11 9 h 1 v 1 h -1 Z M 12 9 h 1 v 1 h -1 Z M 13 9 h 1 v 1 h -1 Z M 14 9 h 1 v 1 h -1 Z M 9 10 h 1 v 1 h -1 Z M 12 10 h 1 v 1 h -1 Z M 9 11 h 1 v 1 h -1 Z M 12 11 h 1 v 1 h -1 Z M 7 12 h 1 v 1 h -1 Z M 8 12 h 1 v 1 h -1 Z M 9 12 h 1 v 1 h -1 Z M 10 12 h 1 v 1 h -1 Z M 11 12 h 1 v 1 h -1 Z M 12 12 h 1 v 1 h -1 Z M 13 12 h 1 v 1 h -1 Z M 14 12 h 1 v 1 h -1 Z M 9 13 h 1 v 1 h -1 Z M 12 13 h 1 v 1 h -1 Z M 9 14 h 1 v 1 h -1 Z M 12 14 h 1 v 1 h -1 Z" fill="#85c5e8"/>
+  </g>
+  <g id="pressed-center" transform="translate(0 104)" shape-rendering="crispEdges">
+    <rect width="22" height="22" fill="#85c5e8" fill-opacity="1"/>
+    <path d="M 5 5 H 2 V 17 H 5 V 16 H 3 V 6 H 5 Z M 17 5 H 20 V 17 H 17 V 16 H 19 V 6 H 17 Z M 9 7 h 1 v 1 h -1 Z M 12 7 h 1 v 1 h -1 Z M 9 8 h 1 v 1 h -1 Z M 12 8 h 1 v 1 h -1 Z M 7 9 h 1 v 1 h -1 Z M 8 9 h 1 v 1 h -1 Z M 9 9 h 1 v 1 h -1 Z M 10 9 h 1 v 1 h -1 Z M 11 9 h 1 v 1 h -1 Z M 12 9 h 1 v 1 h -1 Z M 13 9 h 1 v 1 h -1 Z M 14 9 h 1 v 1 h -1 Z M 9 10 h 1 v 1 h -1 Z M 12 10 h 1 v 1 h -1 Z M 9 11 h 1 v 1 h -1 Z M 12 11 h 1 v 1 h -1 Z M 7 12 h 1 v 1 h -1 Z M 8 12 h 1 v 1 h -1 Z M 9 12 h 1 v 1 h -1 Z M 10 12 h 1 v 1 h -1 Z M 11 12 h 1 v 1 h -1 Z M 12 12 h 1 v 1 h -1 Z M 13 12 h 1 v 1 h -1 Z M 14 12 h 1 v 1 h -1 Z M 9 13 h 1 v 1 h -1 Z M 12 13 h 1 v 1 h -1 Z M 9 14 h 1 v 1 h -1 Z M 12 14 h 1 v 1 h -1 Z" fill="#05080c"/>
+  </g>
+  <g id="pressed-inactive-center" transform="translate(0 130)" shape-rendering="crispEdges">
+    <rect width="22" height="22" fill="#60859d" fill-opacity="1"/>
+    <path d="M 5 5 H 2 V 17 H 5 V 16 H 3 V 6 H 5 Z M 17 5 H 20 V 17 H 17 V 16 H 19 V 6 H 17 Z M 9 7 h 1 v 1 h -1 Z M 12 7 h 1 v 1 h -1 Z M 9 8 h 1 v 1 h -1 Z M 12 8 h 1 v 1 h -1 Z M 7 9 h 1 v 1 h -1 Z M 8 9 h 1 v 1 h -1 Z M 9 9 h 1 v 1 h -1 Z M 10 9 h 1 v 1 h -1 Z M 11 9 h 1 v 1 h -1 Z M 12 9 h 1 v 1 h -1 Z M 13 9 h 1 v 1 h -1 Z M 14 9 h 1 v 1 h -1 Z M 9 10 h 1 v 1 h -1 Z M 12 10 h 1 v 1 h -1 Z M 9 11 h 1 v 1 h -1 Z M 12 11 h 1 v 1 h -1 Z M 7 12 h 1 v 1 h -1 Z M 8 12 h 1 v 1 h -1 Z M 9 12 h 1 v 1 h -1 Z M 10 12 h 1 v 1 h -1 Z M 11 12 h 1 v 1 h -1 Z M 12 12 h 1 v 1 h -1 Z M 13 12 h 1 v 1 h -1 Z M 14 12 h 1 v 1 h -1 Z M 9 13 h 1 v 1 h -1 Z M 12 13 h 1 v 1 h -1 Z M 9 14 h 1 v 1 h -1 Z M 12 14 h 1 v 1 h -1 Z" fill="#05080c"/>
+  </g>
+  <g id="deactivated-center" transform="translate(0 156)" shape-rendering="crispEdges">
+    <rect width="22" height="22" fill="#0a0e16" fill-opacity="0"/>
+    <path d="M 5 5 H 2 V 17 H 5 V 16 H 3 V 6 H 5 Z M 17 5 H 20 V 17 H 17 V 16 H 19 V 6 H 17 Z M 9 7 h 1 v 1 h -1 Z M 12 7 h 1 v 1 h -1 Z M 9 8 h 1 v 1 h -1 Z M 12 8 h 1 v 1 h -1 Z M 7 9 h 1 v 1 h -1 Z M 8 9 h 1 v 1 h -1 Z M 9 9 h 1 v 1 h -1 Z M 10 9 h 1 v 1 h -1 Z M 11 9 h 1 v 1 h -1 Z M 12 9 h 1 v 1 h -1 Z M 13 9 h 1 v 1 h -1 Z M 14 9 h 1 v 1 h -1 Z M 9 10 h 1 v 1 h -1 Z M 12 10 h 1 v 1 h -1 Z M 9 11 h 1 v 1 h -1 Z M 12 11 h 1 v 1 h -1 Z M 7 12 h 1 v 1 h -1 Z M 8 12 h 1 v 1 h -1 Z M 9 12 h 1 v 1 h -1 Z M 10 12 h 1 v 1 h -1 Z M 11 12 h 1 v 1 h -1 Z M 12 12 h 1 v 1 h -1 Z M 13 12 h 1 v 1 h -1 Z M 14 12 h 1 v 1 h -1 Z M 9 13 h 1 v 1 h -1 Z M 12 13 h 1 v 1 h -1 Z M 9 14 h 1 v 1 h -1 Z M 12 14 h 1 v 1 h -1 Z" fill="#29495f"/>
+  </g>
+  <g id="deactivated-inactive-center" transform="translate(0 182)" shape-rendering="crispEdges">
+    <rect width="22" height="22" fill="#0a0e16" fill-opacity="0"/>
+    <path d="M 5 5 H 2 V 17 H 5 V 16 H 3 V 6 H 5 Z M 17 5 H 20 V 17 H 17 V 16 H 19 V 6 H 17 Z M 9 7 h 1 v 1 h -1 Z M 12 7 h 1 v 1 h -1 Z M 9 8 h 1 v 1 h -1 Z M 12 8 h 1 v 1 h -1 Z M 7 9 h 1 v 1 h -1 Z M 8 9 h 1 v 1 h -1 Z M 9 9 h 1 v 1 h -1 Z M 10 9 h 1 v 1 h -1 Z M 11 9 h 1 v 1 h -1 Z M 12 9 h 1 v 1 h -1 Z M 13 9 h 1 v 1 h -1 Z M 14 9 h 1 v 1 h -1 Z M 9 10 h 1 v 1 h -1 Z M 12 10 h 1 v 1 h -1 Z M 9 11 h 1 v 1 h -1 Z M 12 11 h 1 v 1 h -1 Z M 7 12 h 1 v 1 h -1 Z M 8 12 h 1 v 1 h -1 Z M 9 12 h 1 v 1 h -1 Z M 10 12 h 1 v 1 h -1 Z M 11 12 h 1 v 1 h -1 Z M 12 12 h 1 v 1 h -1 Z M 13 12 h 1 v 1 h -1 Z M 14 12 h 1 v 1 h -1 Z M 9 13 h 1 v 1 h -1 Z M 12 13 h 1 v 1 h -1 Z M 9 14 h 1 v 1 h -1 Z M 12 14 h 1 v 1 h -1 Z" fill="#29495f"/>
+  </g>
+</svg>

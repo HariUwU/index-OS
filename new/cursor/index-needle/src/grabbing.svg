@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" role="img" aria-labelledby="title">
+<title id="title">INDEX Needle - GRABBING</title>
+<!-- Hotspot: x=16, y=16; source viewBox 32 x 32, origin top-left. Scale with round-half-up. -->
+<!-- Transparent native vector source. Review only; not activated. -->
+<path d="M7 12L10 10H23L26 13V23L22 29H11L5 22V17H8Z" fill="#5DADE2" stroke="#05080d" stroke-width="3" stroke-linejoin="round"/><path d="M7 12L10 10H23L26 13V23L22 29H11L5 22V17H8Z" fill="#5DADE2" stroke="#e6f2fa" stroke-width="1" stroke-linejoin="round"/><path d="M11 13V18M16 12V18M21 13V19M8 20L13 22" fill="none" stroke="#05080d"/><path d="M12 26H22" stroke="#e6f2fa"/>
+</svg>

@@ -1,0 +1,25 @@
+# Historical source and local test/build evidence stay outside a publication.
+/Old Version/
+/new/dist/
+/new/qa/
+/new/preview/
+/new/cursor/index-needle/build/
+**/__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# Only intro videos and login background music stay local.
+*.mp4
+*.webm
+*.mkv
+*.mov
+*.m4v
+*.avi
+bg.mp3
+
+# Local VM connection helpers and generated credentials.
+/new/tools/vm-*.ps1
+*.pem
+*.key
+.ssh/

@@ -1,0 +1,23 @@
+singleton NotifHistory 1.0 NotifHistory.qml
+Bar 1.0 Bar.qml
+Atmosphere 1.0 Atmosphere.qml
+Notifications 1.0 Notifications.qml
+Osd 1.0 Osd.qml
+BluetoothMenu 1.0 BluetoothMenu.qml
+SettingsPanel 1.0 SettingsPanel.qml
+Settings 1.0 Settings.qml
+Calendar 1.0 Calendar.qml
+Prescript 1.0 Prescript.qml
+singleton Sfx 1.0 Sfx.qml
+DeviceWatch 1.0 DeviceWatch.qml
+singleton KWin 1.0 KWin.qml
+Wallpaper 1.0 Wallpaper.qml
+singleton Glyph 1.0 Glyph.qml
+singleton Screens 1.0 Screens.qml
+singleton UiState 1.0 UiState.qml
+QuickSettings 1.0 QuickSettings.qml
+singleton Pinned 1.0 Pinned.qml
+Clipboard 1.0 Clipboard.qml
+Shortcuts 1.0 Shortcuts.qml
+singleton Features 1.0 Features.qml
+IntroSettings 1.0 IntroSettings.qml

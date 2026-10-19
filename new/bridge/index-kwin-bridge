@@ -1,0 +1,198 @@
+#!/usr/bin/env python3
+# ============================================================
+#  WILL OF THE CITY :: THE INDEX  —  KWin <-> Quickshell bridge
+#
+#  KWin has no wlr-foreign-toplevel, so Quickshell's ToplevelManager
+#  sees nothing. This helper fills the gap:
+#    * loads kwin-bridge.js into KWin, which pushes window state
+#      to us over D-Bus (org.index.KWinBridge.Push)
+#    * prints every state as one JSON line on stdout
+#    * reads commands on stdin and runs each as a one-shot KWin script:
+#        toggle|activate|minimize|close|maximize <window-id>
+#        send <window-id> <desktop>     desktop <n>     refresh
+#  Quickshell runs it as a Process (see quickshell/KWin.qml).
+# ============================================================
+
+import json
+import os
+import signal
+import sys
+import tempfile
+
+import dbus
+import dbus.service
+from dbus.mainloop.glib import DBusGMainLoop
+from gi.repository import GLib
+
+NAME = "org.index.KWinBridge"
+WATCHER_NAME = "index-bridge"
+WATCHER = os.path.join(os.path.dirname(os.path.realpath(__file__)), "kwin-bridge.js")
+RUNTIME = os.path.join(os.environ.get("XDG_RUNTIME_DIR") or tempfile.gettempdir(), "index-bridge")
+
+COMMAND_JS = """
+const ID = %(id)s, ACT = %(act)s, ARG = %(arg)d;
+let w = null;
+for (const x of workspace.windowList()) if (x.internalId.toString() === ID) { w = x; break; }
+function show(x) { x.minimized = false; workspace.activeWindow = x; }
+if (ACT === "desktop") {
+    const d = workspace.desktops[ARG - 1];
+    if (d) workspace.currentDesktop = d;
+} else if (w) {
+    if (ACT === "toggle") {
+        if (workspace.activeWindow === w && !w.minimized) w.minimized = true; else show(w);
+    } else if (ACT === "activate") show(w);
+    else if (ACT === "minimize") w.minimized = true;
+    else if (ACT === "close") w.closeWindow();
+    else if (ACT === "maximize") { show(w); workspace.slotWindowMaximize(); }
+    else if (ACT === "send") {
+        const d = workspace.desktops[ARG - 1];
+        if (d) w.desktops = [d];
+    }
+}
+"""
+
+ACTIONS = {"toggle", "activate", "minimize", "close", "maximize", "send", "desktop"}
+SHORTCUTS = {"files", "clipboard", "quicksettings", "screenshot", "taskmgr", "settings"}
+
+
+class Bridge(dbus.service.Object):
+    @dbus.service.method(NAME, in_signature="s", out_signature="")
+    def Push(self, state):
+        emit(state)
+
+    # kwinrc [ModifierOnlyShortcuts] Meta points here (plasmashell is not running)
+    @dbus.service.method(NAME, in_signature="", out_signature="")
+    def ToggleStartMenu(self):
+        emit(json.dumps({"event": "startmenu"}))
+
+    # Windows-style shortcuts from kwin-bridge.js; Quickshell decides what to do
+    @dbus.service.method(NAME, in_signature="s", out_signature="")
+    def Shortcut(self, name):
+        if name in SHORTCUTS:
+            emit(json.dumps({"event": "shortcut", "name": str(name)}))
+
+
+def emit(line):
+    sys.stdout.write(line.replace("\n", " ") + "\n")
+    sys.stdout.flush()
+
+
+def scripting(bus):
+    return dbus.Interface(bus.get_object("org.kde.KWin", "/Scripting"), "org.kde.kwin.Scripting")
+
+
+def run_script(bus, path, name):
+    if path == WATCHER:
+        config = os.path.join(os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config"), "index", "features.json")
+        features = {key: True for key in ("shortcuts", "clipboard", "quicksettings")}
+        try:
+            with open(config) as f:
+                selected = json.load(f)
+            features.update({key: selected.get(key) is not False for key in features})
+        except (OSError, ValueError, AttributeError):
+            pass
+        with open(WATCHER) as f:
+            script = f.read()
+        path = os.path.join(RUNTIME, "watcher.js")
+        with open(path, "w") as f:
+            f.write("const INDEX_FEATURES = " + json.dumps(features) + ";\n" + script)
+    s = scripting(bus)
+    if s.isScriptLoaded(name):
+        s.unloadScript(name)
+    # loadScript is overloaded (s) and (ss); force the two-argument one
+    sid = s.loadScript(path, name, signature="ss")
+    if sid < 0:
+        raise RuntimeError("KWin refused script %s" % path)
+    obj = bus.get_object("org.kde.KWin", "/Scripting/Script%d" % sid)
+    dbus.Interface(obj, "org.kde.kwin.Script").run()
+
+
+def command(bus, line):
+    parts = line.split()
+    if not parts:
+        return
+    act = parts[0]
+    if act == "refresh":
+        run_script(bus, WATCHER, WATCHER_NAME)
+        return
+    if act not in ACTIONS:
+        return
+    if act == "desktop":
+        wid, arg = "", int(parts[1])
+    else:
+        wid = parts[1]
+        arg = int(parts[2]) if act == "send" else 0
+    js = COMMAND_JS % {"id": json.dumps(wid), "act": json.dumps(act), "arg": arg}
+    path = os.path.join(RUNTIME, "command.js")
+    with open(path, "w") as f:
+        f.write(js)
+    name = "index-bridge-command"
+    run_script(bus, path, name)
+    scripting(bus).unloadScript(name)
+
+
+def main():
+    DBusGMainLoop(set_as_default=True)
+    bus = dbus.SessionBus()
+    if bus.request_name(NAME, dbus.bus.NAME_FLAG_DO_NOT_QUEUE) != dbus.bus.REQUEST_NAME_REPLY_PRIMARY_OWNER:
+        sys.stderr.write("index-kwin-bridge: another bridge is already running\n")
+        return 1
+    os.makedirs(RUNTIME, mode=0o700, exist_ok=True)
+    Bridge(bus, "/bridge")
+    loop = GLib.MainLoop()
+
+    def show_desktop_changed(showing):
+        emit(json.dumps({"event": "showdesktop", "showing": bool(showing)}))
+
+    bus.add_signal_receiver(show_desktop_changed, signal_name="showingDesktopChanged",
+                            dbus_interface="org.kde.KWin", bus_name="org.kde.KWin", path="/KWin")
+
+    def on_stdin(fd, cond):
+        line = sys.stdin.readline()
+        if not line:
+            loop.quit()
+            return False
+        try:
+            command(bus, line)
+        except (dbus.DBusException, ValueError, IndexError, RuntimeError) as e:
+            sys.stderr.write("index-kwin-bridge: %s: %s\n" % (line.strip(), e))
+        return True
+
+    GLib.io_add_watch(sys.stdin, GLib.PRIORITY_DEFAULT, GLib.IO_IN | GLib.IO_HUP, on_stdin)
+    unix_signal_add = getattr(GLib, "unix_signal_add", None)
+    try:
+        from gi.repository import GLibUnix
+        unix_signal_add = GLibUnix.signal_add
+    except ImportError:
+        pass
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        unix_signal_add(GLib.PRIORITY_DEFAULT, sig, loop.quit)
+
+    # the watcher pushes the first state as soon as it is loaded;
+    # at login KWin may not have /Scripting yet, so retry for a while
+    tries = [0]
+
+    def load_watcher():
+        try:
+            run_script(bus, WATCHER, WATCHER_NAME)
+            properties = dbus.Interface(bus.get_object("org.kde.KWin", "/KWin"), "org.freedesktop.DBus.Properties")
+            show_desktop_changed(properties.Get("org.kde.KWin", "showingDesktop"))
+            return False
+        except (dbus.DBusException, RuntimeError) as e:
+            tries[0] += 1
+            if tries[0] == 30:
+                sys.stderr.write("index-kwin-bridge: cannot load watcher: %s\n" % e)
+            return tries[0] < 30
+
+    GLib.timeout_add(500, load_watcher)
+    loop.run()
+
+    try:
+        scripting(bus).unloadScript(WATCHER_NAME)
+    except dbus.DBusException:
+        pass
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+case "${1:-}" in
+    --restore)
+        shift
+        exec bash /usr/share/index-os/install.sh --restore "$@" ;;
+    --restore-login)
+        shift
+        exec bash /usr/share/index-os/install-greeter.sh --restore "$@" ;;
+    *) exec bash /usr/share/index-os/setup.sh "$@" ;;
+esac

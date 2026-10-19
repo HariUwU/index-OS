@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec python3 /usr/share/index-os/tools/index-intro.py "$@"

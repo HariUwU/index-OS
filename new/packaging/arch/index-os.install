@@ -1,0 +1,10 @@
+post_install() {
+  printf '\nTHE INDEX: launch INDEX Setup from your app menu, or run index-setup as your normal user.\n'
+}
+post_upgrade() {
+  printf '\nTHE INDEX: run index-setup to apply the updated files to your account.\n'
+}
+pre_remove() {
+  printf '\nTo restore Plasma settings, run index-setup --restore before removing this package.\n'
+  printf 'To restore the previous login screen, use index-setup --restore-login.\n'
+}
