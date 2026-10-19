@@ -22,6 +22,10 @@ exact list with `--dry-run`. Current Arch repositories include `quickshell`.
 
 ## Install
 
+Enable the [signed INDEX pacman repository](packaging/repo/README.md) once, then
+run `sudo pacman -Syu index-os` and `index-setup`. After synchronization, the
+package is available through `sudo pacman -S index-os`.
+
 For the native Arch package, run `sudo pacman -U ./index-os-0.1.1rc12-1-any.pkg.tar.zst`,
 then `index-setup` as your normal user. Pacman installs the selector and its basic
 dependencies; the same checklist below applies your chosen components. See
@@ -87,7 +91,8 @@ bash setup.sh --components desktop --no-packages
 yay installation. The native `index-os` package adds **INDEX Setup** to the app menu
 and the `index-setup` command. See [Arch package instructions](packaging/arch/README.md)
 to build and install it with pacman. The same checklist works from source and from
-the package. Public AUR/repository publication is separate from the local build.
+the package. Repository signing and publication are managed separately from
+the local build; no AUR submission is required for the custom binary repository.
 
 Disabled desktop widgets and shortcut registrations stay off. Existing optional
 terminal/Fastfetch themes from an earlier run remain until explicitly restored:

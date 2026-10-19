@@ -6,6 +6,13 @@ installs only the dependencies needed for your selection using pacman or yay.
 
 ## Install the package
 
+For `sudo pacman -S index-os`, first enable the
+[signed INDEX repository](../repo/README.md). Its one-time setup imports the
+signing key and configures pacman; `sudo pacman -Syu index-os` then installs
+and updates from the repository. Run `index-setup` as your normal user afterward.
+
+For local installation without configuring the repository:
+
 Download the provided `index-os-0.1.1rc12-1-any.pkg.tar.zst` file and open a
 terminal in its folder. Keep the package compressed; pacman reads it directly:
 
@@ -88,10 +95,10 @@ Log out/in after restoring the desktop; reboot after restoring the boot login.
 
 ## Repository publication
 
-The generated recipe is ready for a local `makepkg` build. A public `yay -S index-os`
-installation needs an AUR submission and a published, versioned source archive URL
-in `source=()`. A public `pacman -S index-os` installation needs a configured package
-repository. Neither service is registered by these build tools.
+The signed custom pacman repository is hosted in the `pacman-repo` GitHub release.
+See [repository maintenance](../repo/README.md) for signing and metadata updates.
+The generated recipe still supports local `makepkg` builds. No AUR submission
+has been made; it is separate from the configured binary repository.
 
 The source archive retains `LICENSE` and `ATTRIBUTION.md`, including the separate
 terms for bundled third-party fonts. Review those terms before public redistribution.

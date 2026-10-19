@@ -11,15 +11,17 @@ and installer live on `main`.
 
 ## Install with pacman
 
-Download the [RC12 pacman package](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc12/index-os-0.1.1rc12-1-any.pkg.tar.zst)
-and its [SHA256 checksum](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc12/index-os-0.1.1rc12-1-any.pkg.tar.zst.sha256).
-
-Install the native Arch package with pacman, then open the component selector:
+Enable the signed INDEX repository once, then install and open the selector:
 
 ```bash
-sudo pacman -U ./index-os-0.1.1rc12-1-any.pkg.tar.zst
+curl -fLO https://github.com/HariUwU/index-OS/releases/download/pacman-repo/enable-index-repo.sh
+bash enable-index-repo.sh
+sudo pacman -Syu index-os
 index-setup
 ```
+
+After setup, `sudo pacman -S index-os` works normally. Updates are included in
+`sudo pacman -Syu`. See the [repository setup and signing key](packaging/repo/README.md).
 
 Run `index-setup` as your normal user, or launch **INDEX Setup** from the app
 menu. Pacman installs the setup command and its basic dependencies; the selector
@@ -29,8 +31,9 @@ Pacman installs Python automatically, so the manual Python prerequisite below ap
 only to the extracted source installer. See the
 [pacman instructions](packaging/arch/README.md) for updates and removal.
 
-The tested package is a local installation file. `pacman -S index-os` requires
-an INDEX package repository; it is not published yet.
+For manual local installation, download the [RC12 pacman package](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc12/index-os-0.1.1rc12-1-any.pkg.tar.zst)
+and its [checksum](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc12/index-os-0.1.1rc12-1-any.pkg.tar.zst.sha256),
+then run `sudo pacman -U ./index-os-0.1.1rc12-1-any.pkg.tar.zst` and `index-setup`.
 
 The INDEX logo, wallpaper, power icons and sound effects are included.
 Only the intro video and login background music are not bundled. To add your own,
