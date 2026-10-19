@@ -11,19 +11,42 @@ The previous labwc version is preserved on the
 [`old` branch](https://github.com/HariUwU/index-OS/tree/old). The current desktop
 and installer live on `main`.
 
-## Install with pacman
+## Install with yay
 
-Enable the signed INDEX repository once, then install and open the selector:
+If you already have **yay**, enable the signed INDEX repository once per computer:
 
 ```bash
 curl -fLO https://github.com/HariUwU/index-OS/releases/download/pacman-repo/enable-index-repo.sh
 bash enable-index-repo.sh
+```
+
+Then install INDEX and open the component selector:
+
+```bash
+yay -Syu index-os
+index-setup --manager yay
+```
+
+Run yay and INDEX Setup as your normal user; they request sudo when needed.
+`--manager yay` also uses yay for the dependencies of your selected components.
+After the initial synchronization, `yay -S index-os` works too; use `yay -Syu`
+for updates.
+
+INDEX currently comes from our signed repository. An AUR package has not been
+published, so the one-time repository setup is required for yay too. See the
+[repository setup and signing key](packaging/repo/README.md).
+
+## Install with pacman
+
+After enabling the same repository above, you can use pacman directly:
+
+```bash
 sudo pacman -Syu index-os
 index-setup
 ```
 
-After setup, `sudo pacman -S index-os` works normally. Updates are included in
-`sudo pacman -Syu`. See the [repository setup and signing key](packaging/repo/README.md).
+After the initial synchronization, `sudo pacman -S index-os` works normally.
+Updates are included in `sudo pacman -Syu`.
 
 Run `index-setup` as your normal user, or launch **INDEX Setup** from the app
 menu. Pacman installs the setup command and its basic dependencies; the selector
