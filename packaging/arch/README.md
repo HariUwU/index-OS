@@ -13,11 +13,11 @@ and updates from the repository. Run `index-setup` as your normal user afterward
 
 For local installation without configuring the repository:
 
-Download the provided `index-os-0.1.1rc12-1-any.pkg.tar.zst` file and open a
+Download the provided `index-os-0.1.1rc13-1-any.pkg.tar.zst` file and open a
 terminal in its folder. Keep the package compressed; pacman reads it directly:
 
 ```sh
-sudo pacman -U ./index-os-0.1.1rc12-1-any.pkg.tar.zst
+sudo pacman -U ./index-os-0.1.1rc13-1-any.pkg.tar.zst
 index-setup
 ```
 
@@ -35,19 +35,21 @@ drivers, working internet and a normal account with sudo remain prerequisites.
 When a matching `.sha256` file is supplied, verify the download before installing:
 
 ```sh
-sha256sum -c index-os-0.1.1rc12-1-any.pkg.tar.zst.sha256
+sha256sum -c index-os-0.1.1rc13-1-any.pkg.tar.zst.sha256
 ```
 
-RC12 package installation, settings preservation and packaged desktop setup
-were checked in the Arch VM. Earlier package lifecycle checks also covered
-removal/reinstallation and isolated Fastfetch setup.
+The optional-media setup screen and package upgrade were checked in the Arch
+VM. Earlier package lifecycle checks also covered settings preservation,
+packaged desktop setup, removal/reinstallation and isolated Fastfetch setup.
 
 ## Optional personal files
 
 The INDEX logo, wallpaper, profile image, power icons and sound effects are
 included. Only intro videos and login background music are not bundled. Add
 `intro.mp4` and/or `sounds/bg.mp3` under `~/.local/share/index/assets/` before
-running `index-setup`; source users can add them under `assets/` before setup.
+running `index-setup`, or add them while paused on its **Optional video and music**
+screen. Setup shows the exact paths and file status; **R** rechecks and **Enter**
+continues with or without files. Source users can also use `assets/` before setup.
 See [`assets/README.md`](../../assets/README.md). The author's modified Universal
 font remains the system font. Package generation excludes only video files and
 `bg.mp3`, keeping the other original assets.
@@ -57,7 +59,7 @@ font remains the system font. Package generation excludes only video files and
 From the repository root, on Windows or Linux:
 
 ```sh
-python3 packaging/arch/prepare.py --version 0.1.1rc12 --output dist/arch
+python3 packaging/arch/prepare.py --version 0.1.1rc13 --output dist/arch
 ```
 
 This creates `dist/arch/PKGBUILD`, a runtime source archive with a real SHA-256
@@ -69,7 +71,7 @@ Build on Arch as a normal user with `base-devel` available:
 ```sh
 cd dist/arch
 makepkg
-sudo pacman -U ./index-os-0.1.1rc12-1-any.pkg.tar.zst
+sudo pacman -U ./index-os-0.1.1rc13-1-any.pkg.tar.zst
 index-setup
 ```
 

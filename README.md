@@ -31,25 +31,27 @@ Pacman installs Python automatically, so the manual Python prerequisite below ap
 only to the extracted source installer. See the
 [pacman instructions](packaging/arch/README.md) for updates and removal.
 
-For manual local installation, download the [RC12 pacman package](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc12/index-os-0.1.1rc12-1-any.pkg.tar.zst)
-and its [checksum](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc12/index-os-0.1.1rc12-1-any.pkg.tar.zst.sha256),
-then run `sudo pacman -U ./index-os-0.1.1rc12-1-any.pkg.tar.zst` and `index-setup`.
+For manual local installation, download the [RC13 pacman package](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc13/index-os-0.1.1rc13-1-any.pkg.tar.zst)
+and its [checksum](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc13/index-os-0.1.1rc13-1-any.pkg.tar.zst.sha256),
+then run `sudo pacman -U ./index-os-0.1.1rc13-1-any.pkg.tar.zst` and `index-setup`.
 
 The INDEX logo, wallpaper, power icons and sound effects are included.
 Only the intro video and login background music are not bundled. To add your own,
 put `intro.mp4` and/or `sounds/bg.mp3` in `~/.local/share/index/assets/` before
-running `index-setup`. For source installation, use `assets/` instead.
+running `index-setup`, or pause on its **Optional video and music** screen to add
+them. Setup shows the exact paths and whether each file is present. Press **R**
+to recheck, **Enter** to continue (both files are optional), or **Esc** to cancel.
+For source installation, you can also use `assets/` in the extracted project.
 See [optional file names](assets/README.md). INDEX keeps the author's modified
 Universal font as its system font; no font download or replacement is required.
 
 ## Install from source
 
-The current repository has a flat layout: desktop files are at the root.
-The published RC12 installer archive retains its original extracted layout;
-keep its contents together and run its own `install.sh`.
+The repository and RC13 installer archive have a flat layout: desktop files
+are at the root. Keep the extracted files together and run `install.sh`.
 
 Clone this repository, or extract the complete
-[source installer](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc12/index-os-0.1.1rc12-installer.tar.gz),
+[source installer](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc13/index-os-0.1.1rc13-installer.tar.gz),
 open a terminal in its folder, then run:
 
 ```bash

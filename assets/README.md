@@ -23,6 +23,13 @@ files in `~/.local/share/index/assets/`, using the same filenames. If you set
 `XDG_DATA_HOME`, use `$XDG_DATA_HOME/index/assets/` instead. Then run `index-setup`
 and select the screens/components to update. No editing `/usr/share` is needed.
 
+Setup pauses at **Optional video and music** before the final install confirmation.
+It shows your exact paths and whether files are present. Add files from another
+terminal, press **R** to recheck, then **Enter** to continue. **Esc** cancels
+without installing anything. Missing files are fine: a fresh install skips the
+intro and background music. Existing installed media and saved custom intro
+choices are kept. If `intro.mp4` should play, select the **Intro video** component.
+
 To change just the intro after setup, use **Win+A → Settings → Intro Video →
 Choose Video → Use Video**. This validates and copies the chosen file. Login
 changes request your Linux password; lock and login video choices are separate.

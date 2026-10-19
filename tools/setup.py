@@ -59,6 +59,34 @@ def run(command):
     subprocess.run([str(value) for value in command], check=True)
 
 
+def optional_media_lines(selected, video=None):
+    """Describe the same overlay/source precedence used by install-assets.py."""
+    data = Path(os.environ.get('XDG_DATA_HOME') or Path.home() / '.local/share')
+    overlay = data / 'index/assets'
+    lines = [
+        'The intro video and login background music are optional and not bundled.',
+        'Add your own files at these exact paths before continuing:',
+        '',
+    ]
+    for label, relative in (('Intro video', 'intro.mp4'), ('Login background music', 'sounds/bg.mp3')):
+        supplied = next((root / relative for root in (overlay, SRC / 'assets')
+                         if (root / relative).is_file()), None)
+        lines += [label + ':', str(overlay / relative),
+                  'Found: ' + str(supplied) if supplied else 'Not supplied (optional)', '']
+    if video:
+        lines += ['Selected intro override: ' + str(video), '']
+    lines += [
+        'Create parent folders if needed. You can copy files from another terminal, then press R to recheck.',
+        'Source installs also accept assets/intro.mp4 and assets/sounds/bg.mp3 in the extracted project.',
+        'No files yet? Continue: a fresh install skips the video and background music. Existing installed media is kept.',
+        'Saved custom intro choices take priority; use Settings > Intro Video to change them.',
+    ]
+    if 'intro' not in selected:
+        lines.append('Intro playback is off because the Intro video component is not selected.')
+    lines.append('The INDEX wallpaper, logo, font and sound effects are included.')
+    return lines
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--components', help='Comma-separated names, or all')
@@ -105,6 +133,13 @@ def main():
         selected = normalize(selected)
     except ValueError as error:
         parser.error(str(error))
+    has_media = bool(selected & {'desktop', 'login', 'intro'})
+    interactive = sys.stdin.isatty() and sys.stdout.isatty()
+    if has_media and interactive and not args.yes and not args.dry_run:
+        from setup_menu import prepare_media
+        if not prepare_media(lambda: optional_media_lines(selected, args.intro_video)):
+            print('Cancelled; nothing changed.')
+            return
     packages = list(dict.fromkeys(package for name in COMPONENTS if name in selected for package in PACKAGES[name]))
     print('\nSelected components:')
     for name in COMPONENTS:
@@ -114,8 +149,10 @@ def main():
     if args.intro_video:
         print('Intro video: ' + str(args.intro_video))
     print('Cursor activation: unchanged. Package creation/publication: not part of this setup.')
-    print('Only intro videos and login background music are not bundled. Add your files under ~/.local/share/index/assets '
-          '(or source assets/) before setup, or choose an intro later in Settings > Intro Video.')
+    media = optional_media_lines(selected, args.intro_video) if has_media else []
+    if media:
+        print('\nOptional video and music:')
+        print('\n'.join(media))
     if 'desktop' in selected and 'login' not in selected:
         print('Desktop without Login: use your existing display manager (Plasma Wayland), '
               'or log in at a local text console and run startplasma-wayland. '
@@ -131,7 +168,7 @@ def main():
         if not sys.stdin.isatty() or not sys.stdout.isatty():
             parser.error('Use --dry-run to review, then --yes to apply non-interactively')
         from setup_menu import confirm_install
-        if not confirm_install(COMPONENTS, selected, packages, args.manager, args.no_packages, args.intro_video):
+        if not confirm_install(COMPONENTS, selected, packages, args.manager, args.no_packages, args.intro_video, media):
             print('Cancelled; nothing changed.')
             return
     if args.intro_video:

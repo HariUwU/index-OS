@@ -102,7 +102,46 @@ def choose_components(components, defaults, normalize):
     return _terminal(show)
 
 
-def confirm_install(components, selected, packages, manager, no_packages, video=None):
+def prepare_media(describe):
+    """Pause before installation so users can supply optional personal media."""
+    def show(screen, curses, color):
+        offset = 0
+        media = describe()
+        while True:
+            screen.erase()
+            height, width = screen.getmaxyx()
+            if height < 12 or width < 48:
+                _write(screen, 0, 'Enlarge the terminal (48 columns / 12 rows).', color)
+                _write(screen, 2, 'Esc: cancel')
+                key = screen.get_wch()
+                if key in ('\x1b', 'q', 'Q'):
+                    return False
+                continue
+            lines = [wrapped for line in media
+                     for wrapped in (textwrap.wrap(line, width - 4) or [''])]
+            count = height - 7
+            offset = min(offset, max(0, len(lines) - count))
+            _write(screen, 1, 'THE INDEX / OPTIONAL VIDEO AND MUSIC', color | curses.A_BOLD)
+            for row, line in enumerate(lines[offset:offset + count], 3):
+                _write(screen, row, line)
+            _write(screen, height - 3, 'Enter: continue   R: recheck   Esc: cancel', color | curses.A_BOLD)
+            _write(screen, height - 2, 'Up/Down: scroll   Both files are optional.', color)
+            screen.refresh()
+            key = screen.get_wch()
+            if key in ('\n', '\r', curses.KEY_ENTER):
+                return True
+            if key in ('\x1b', 'q', 'Q'):
+                return False
+            if key in ('r', 'R'):
+                media = describe()
+            elif key in (curses.KEY_DOWN, 'j'):
+                offset = min(offset + 1, max(0, len(lines) - count))
+            elif key in (curses.KEY_UP, 'k'):
+                offset = max(0, offset - 1)
+    return _terminal(show)
+
+
+def confirm_install(components, selected, packages, manager, no_packages, video=None, media=None):
     def show(screen, curses, color):
         offset = 0
         while True:
@@ -123,6 +162,10 @@ def confirm_install(components, selected, packages, manager, no_packages, video=
             lines.extend(textwrap.wrap(', '.join(packages), width - 4))
             if video:
                 lines += ['', *textwrap.wrap('Intro video: ' + str(video), width - 4)]
+            if media:
+                lines += ['', 'Optional video and music:']
+                for line in media:
+                    lines.extend(textwrap.wrap(line, width - 4) or [''])
             lines += ['', 'Your current cursor stays active.']
             count = height - 7
             offset = min(offset, max(0, len(lines) - count))

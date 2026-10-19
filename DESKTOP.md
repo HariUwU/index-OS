@@ -26,7 +26,7 @@ Enable the [signed INDEX pacman repository](packaging/repo/README.md) once, then
 run `sudo pacman -Syu index-os` and `index-setup`. After synchronization, the
 package is available through `sudo pacman -S index-os`.
 
-For the native Arch package, run `sudo pacman -U ./index-os-0.1.1rc12-1-any.pkg.tar.zst`,
+For the native Arch package, run `sudo pacman -U ./index-os-0.1.1rc13-1-any.pkg.tar.zst`,
 then `index-setup` as your normal user. Pacman installs the selector and its basic
 dependencies; the same checklist below applies your chosen components. See
 [package instructions](packaging/arch/README.md) for verification and removal.
@@ -56,7 +56,10 @@ sudo reboot
 
 Add any other components you want to that list, or use the interactive selector.
 Media is optional: source users can add files in `assets/` before setup; pacman
-users use `~/.local/share/index/assets/`. See [optional media](assets/README.md).
+users use `~/.local/share/index/assets/`. Setup shows these exact paths on its
+**Optional video and music** screen before installation. Add files from another
+terminal, press **R** to recheck, then **Enter** to continue, or skip both files.
+See [optional media](assets/README.md).
 Only intro videos and login background music are omitted. The INDEX logo,
 wallpaper, profile image, power icons and sound effects are retained. The author's
 modified Universal font remains the system font. Missing optional video/music is skipped.

@@ -1,5 +1,6 @@
 post_install() {
   printf '\nTHE INDEX: launch INDEX Setup from your app menu, or run index-setup as your normal user.\n'
+  printf 'Setup shows where to add your optional intro.mp4 and sounds/bg.mp3 before applying changes.\n'
 }
 post_upgrade() {
   printf '\nTHE INDEX: run index-setup to apply the updated files to your account.\n'

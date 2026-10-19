@@ -91,6 +91,75 @@ class ConsolePrerequisitesTests(unittest.TestCase):
         self.assertFalse(list(self.root.iterdir()))
         self.assertIn('startplasma-wayland', self.output.getvalue())
 
+    def test_media_paths_respect_xdg_and_overlay_priority(self):
+        source = self.root / 'source'
+        overlay = self.root / 'personal/index/assets'
+        (source / 'assets/sounds').mkdir(parents=True)
+        (source / 'assets/intro.mp4').write_bytes(b'source video')
+        (source / 'assets/sounds/bg.mp3').write_bytes(b'source audio')
+        overlay.mkdir(parents=True)
+        (overlay / 'intro.mp4').write_bytes(b'personal video')
+        with mock.patch.object(setup, 'SRC', source), \
+                mock.patch.dict(os.environ, XDG_DATA_HOME=str(self.root / 'personal')):
+            lines = setup.optional_media_lines({'desktop', 'intro'})
+        self.assertIn(str(overlay / 'intro.mp4'), lines)
+        self.assertIn(str(overlay / 'sounds/bg.mp3'), lines)
+        self.assertIn('Found: ' + str(overlay / 'intro.mp4'), lines)
+        self.assertIn('Found: ' + str(source / 'assets/sounds/bg.mp3'), lines)
+        self.assertNotIn('Found: ' + str(source / 'assets/intro.mp4'), lines)
+
+    def test_missing_media_is_optional_and_inspection_writes_nothing(self):
+        with mock.patch.object(setup, 'SRC', self.root / 'source'), \
+                mock.patch.dict(os.environ, XDG_DATA_HOME=str(self.root / 'personal')):
+            lines = setup.optional_media_lines({'desktop'})
+        self.assertEqual(lines.count('Not supplied (optional)'), 2)
+        self.assertIn('Intro playback is off because the Intro video component is not selected.', lines)
+        self.assertFalse(list(self.root.iterdir()))
+
+    def test_cancel_media_stops_before_packages_or_confirmation(self):
+        menu = SimpleNamespace(prepare_media=mock.Mock(return_value=False),
+                               confirm_install=mock.Mock())
+        with mock.patch.dict(sys.modules, setup_menu=menu), \
+                mock.patch.object(sys.stdin, 'isatty', return_value=True), \
+                mock.patch.object(self.output, 'isatty', return_value=True), \
+                mock.patch.object(sys, 'argv', ['setup.py', '--components', 'desktop']), \
+                mock.patch.object(setup, 'run') as run, redirect_stdout(self.output):
+            setup.main()
+        menu.prepare_media.assert_called_once()
+        menu.confirm_install.assert_not_called()
+        run.assert_not_called()
+        self.assertIn('Cancelled; nothing changed.', self.output.getvalue())
+
+    def test_continue_media_refreshes_status_before_final_review(self):
+        def prepare(describe):
+            self.assertIn('Not supplied (optional)', describe())
+            media = self.root / 'data/index/assets'
+            (media / 'sounds').mkdir(parents=True)
+            (media / 'intro.mp4').write_bytes(b'personal video')
+            (media / 'sounds/bg.mp3').write_bytes(b'personal music')
+            return True
+
+        menu = SimpleNamespace(prepare_media=mock.Mock(side_effect=prepare),
+                               confirm_install=mock.Mock(return_value=False))
+        platform = SimpleNamespace(name='posix', geteuid=lambda: 1000,
+                                   environ=dict(os.environ, XDG_CONFIG_HOME=str(self.root / 'config'),
+                                                XDG_DATA_HOME=str(self.root / 'data')))
+        with mock.patch.dict(sys.modules, setup_menu=menu), \
+                mock.patch.object(setup, 'os', platform), \
+                mock.patch.object(setup, 'SRC', self.root / 'source'), \
+                mock.patch.object(setup.shutil, 'which', return_value='/usr/bin/pacman'), \
+                mock.patch.object(sys.stdin, 'isatty', return_value=True), \
+                mock.patch.object(self.output, 'isatty', return_value=True), \
+                mock.patch.object(sys, 'argv', ['setup.py', '--components', 'desktop,intro']), \
+                mock.patch.object(setup, 'run') as run, redirect_stdout(self.output):
+            setup.main()
+        self.assertIn('Found: ' + str(self.root / 'data/index/assets/intro.mp4'),
+                      menu.confirm_install.call_args.args[-1])
+        self.assertIn('Found: ' + str(self.root / 'data/index/assets/sounds/bg.mp3'),
+                      menu.confirm_install.call_args.args[-1])
+        run.assert_not_called()
+        self.assertFalse((self.root / 'config').exists())
+
 
 if __name__ == '__main__':
     unittest.main()
