@@ -1,151 +1,103 @@
 # WILL OF THE CITY :: THE INDEX
 
-An INDEX desktop for **KDE Plasma 6 / KWin**, with floating windows, a Windows-style
-taskbar, Quickshell panels, native locking and an optional login screen.
+An INDEX-themed desktop built on KDE Plasma 6, KWin and Quickshell. Floating
+windows, a top taskbar, and matching lock and login screens.
 
-![INDEX desktop with its top taskbar, workspaces and Prescript widget](docs/images/index-desktop.png)
-
-Desktop captured in the Arch Linux test VM.
-
-The previous labwc version is preserved on the
-[`old` branch](https://github.com/HariUwU/index-OS/tree/old). The current desktop
-and installer live on `main`.
+![INDEX desktop](docs/images/index-desktop.png)
 
 ## Install with yay
 
-If you already have **yay**, enable the signed INDEX repository once per computer:
+You need an installed Arch-based system, working graphics drivers, internet,
+and a normal user account with sudo. KDE does not need to be installed first.
+
+INDEX isn't on the AUR yet. If you have yay, add our signed repository once,
+then install:
 
 ```bash
 curl -fLO https://github.com/HariUwU/index-OS/releases/download/pacman-repo/enable-index-repo.sh
 bash enable-index-repo.sh
-```
-
-Then install INDEX and open the component selector:
-
-```bash
 yay -Syu index-os
 index-setup --manager yay
 ```
 
-Run yay and INDEX Setup as your normal user; they request sudo when needed.
-`--manager yay` also uses yay for the dependencies of your selected components.
-After the initial synchronization, `yay -S index-os` works too; use `yay -Syu`
-for updates.
+Run these as your normal user. Setup asks for sudo when needed.
 
-INDEX currently comes from our signed repository. An AUR package has not been
-published, so the one-time repository setup is required for yay too. See the
-[repository setup and signing key](packaging/repo/README.md).
+### Using pacman instead
 
-## Install with pacman
-
-After enabling the same repository above, you can use pacman directly:
+Add the same repository with the first two commands above, then run:
 
 ```bash
 sudo pacman -Syu index-os
 index-setup
 ```
 
-After the initial synchronization, `sudo pacman -S index-os` works normally.
-Updates are included in `sudo pacman -Syu`.
+Update with `yay -Syu` or `sudo pacman -Syu`. Run `index-setup` again to apply
+updated files to your desktop. [Repository and signing key details](packaging/repo/README.md).
 
-Run `index-setup` as your normal user, or launch **INDEX Setup** from the app
-menu. Pacman installs the setup command and its basic dependencies; the selector
-installs the dependencies for the components you choose. On bare Arch, select
-**Desktop + Login screen**. Up/Down moves, Space selects and Enter confirms.
-Pacman installs Python automatically, so the manual Python prerequisite below applies
-only to the extracted source installer. See the
-[pacman instructions](packaging/arch/README.md) for updates and removal.
+## Setup
 
-For manual local installation, download the [RC13 pacman package](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc13/index-os-0.1.1rc13-1-any.pkg.tar.zst)
-and its [checksum](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc13/index-os-0.1.1rc13-1-any.pkg.tar.zst.sha256),
-then run `sudo pacman -U ./index-os-0.1.1rc13-1-any.pkg.tar.zst` and `index-setup`.
+Choose which parts to install. On a fresh Arch system, select **Desktop + Login
+screen**. If you already use Plasma, the login screen is optional.
 
-## Optional intro video and login music
+**Up/Down** moves, **Space** selects, **Enter** continues, and **Esc** cancels.
+You review your choices before anything is installed.
 
-The intro video and login background music are supplied by you. Both are optional.
-Before setup applies your selected components, put your own files at these exact paths:
+Log out and back in after desktop setup. Reboot if you installed the login
+screen. If you skip the login screen, use your existing display manager's
+**Plasma (Wayland)** session, or run `startplasma-wayland` from a local text console.
 
-| Personal file | Path |
-|---|---|
-| Intro video | `~/.local/share/index/assets/intro.mp4` |
-| Login background music | `~/.local/share/index/assets/sounds/bg.mp3` |
+## Your intro video and login music
 
-Create the folders first, then copy your files into them using those filenames:
+The intro video and login background music are optional. To use your own, create
+this folder and copy your files to the paths below:
 
 ```bash
 mkdir -p ~/.local/share/index/assets/sounds
 ```
 
-If you use `XDG_DATA_HOME`, place them under `$XDG_DATA_HOME/index/assets/`
-instead. Source users can also put them in `assets/intro.mp4` and
-`assets/sounds/bg.mp3` inside the extracted project.
+| File | Path |
+|---|---|
+| Intro video | `~/.local/share/index/assets/intro.mp4` |
+| Login music | `~/.local/share/index/assets/sounds/bg.mp3` |
 
-Run `index-setup` (or `bash install.sh` for source installs). Select **Intro video**
-if you want video playback. Setup pauses on **Optional video and music** and shows
-the exact paths and whether each file is present. You can add files from another
-terminal while this screen is open:
+If you set `XDG_DATA_HOME`, use `$XDG_DATA_HOME/index/assets/` instead.
 
-- **R**: recheck files.
-- **Enter**: continue to the final install review, with or without either file.
-- **Esc**: cancel before installation changes.
+Setup pauses at **Optional video and music** before installing. You can copy
+files from another terminal, press **R** to recheck, then **Enter** to continue.
+You can also leave both files out. A fresh install will skip the intro and login
+music; existing media and saved video choices are kept.
 
-On a fresh install without these files, the password screen opens directly and
-no login background music plays. Existing installed media and saved custom intro
-choices are kept. Change your video later in **Win+A → Settings → Intro Video**.
+Select **Intro video** in setup to enable playback. To change it later, open
+**Win+A → Settings → Intro Video**.
 
-The INDEX logo, wallpaper, power icons and sound effects are included. INDEX uses
-the author's modified `PerfectDOSVGA437-Universal.ttf` as its system font; no
-font download or replacement is required. See [all optional file names](assets/README.md).
+The wallpaper, logo, icons, sound effects and modified
+`PerfectDOSVGA437-Universal.ttf` font are included.
+[More about personal files](assets/README.md).
 
 ## Install from source
 
-The repository and RC13 installer archive have a flat layout: desktop files
-are at the root. Keep the extracted files together and run `install.sh`.
-
-Clone this repository, or extract the complete
-[source installer](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc13/index-os-0.1.1rc13-installer.tar.gz),
-open a terminal in its folder, then install Python and start setup:
-
 ```bash
-sudo pacman -Syu --needed python
+sudo pacman -Syu --needed git python
+git clone https://github.com/HariUwU/index-OS.git
+cd index-OS
 bash install.sh
 ```
 
-Run as your normal user. Setup asks for sudo when installing dependencies or
-applying the optional login screen. Keep the complete checkout together: `install.sh`, `setup.sh`, `tools/`,
-`assets/` and the desktop folders belong at the repository root.
+Or download the [RC13 source installer](https://github.com/HariUwU/index-OS/releases/download/v0.1.1rc13/index-os-0.1.1rc13-installer.tar.gz),
+extract it, and run `bash install.sh` inside its folder. Keep the extracted files together.
 
-Use **Up/Down** to move, **Space** to select features, and **Enter** to review and
-confirm. **Esc** cancels. Choose the desktop, login screen, intro, Fastfetch and
-other features independently; required components are selected together.
+Source installs also accept `assets/intro.mp4` and `assets/sounds/bg.mp3` in
+the project folder. To use yay for dependencies, run `bash install.sh --manager yay`.
+To preview a selection, run `bash install.sh --components desktop,login --dry-run`.
 
-Works from an installed Arch Linux text console or an existing Arch-based KDE
-Plasma 6 system. Start with a bootable system, working internet, suitable graphics
-drivers, and a normal user allowed to use `sudo`. Pacman package users get Python
-automatically; the command above is for source installs.
+## Notes
 
-On a fresh system, select **Desktop + Login screen** and reboot after setup.
-Setup installs Plasma/KWin, the INDEX shell and their runtime dependencies before
-applying settings; KDE does not need to be preinstalled. Login screen installs and
-enables the INDEX display manager for graphical login at boot. It is optional
-and is not selected by default.
+This is a release candidate tested in an Arch VirtualBox VM. The screenshot
+above is from that VM.
 
-With **Desktop** alone, use your existing display manager's **Plasma (Wayland)**
-session. If there is no display manager, log in at a local text console and run
-`startplasma-wayland` each time. Setup does not silently enable a display manager.
+- [Desktop settings and restoration](DESKTOP.md)
+- [Local package installation and removal](packaging/arch/README.md)
+- [Credits and font information](ATTRIBUTION.md)
+- [License](LICENSE)
 
-Dependencies use pacman by default, or your existing yay installation:
-
-```bash
-bash install.sh --manager yay
-bash install.sh --components desktop,login --dry-run
-bash install.sh --components desktop,intro,fastfetch --dry-run
-```
-
-Change videos later in **Win+A → Settings → Intro Video**.
-See [desktop instructions](DESKTOP.md) for settings and restoration.
-
-This is a release candidate tested in an Arch VirtualBox VM.
-Personal videos/background music, historical sources and local test/build output are excluded
-from the publication tree. Font/source credits remain in
-[ATTRIBUTION.md](ATTRIBUTION.md).
+The previous labwc version is on the [`old` branch](https://github.com/HariUwU/index-OS/tree/old).
